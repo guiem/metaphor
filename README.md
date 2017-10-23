@@ -1,1 +1,3 @@
-# Metaphor ML (Machine Learning)
+# Metaphor
+
+Machine Learning system to create metaphors.
