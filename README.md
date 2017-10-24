@@ -1,3 +1,3 @@
 # Metaphor
 
-Machine Learning system to create metaphors.
+Artificial Intelligence system to create metaphors.
