@@ -1,0 +1,53 @@
+{% load staticfiles %}
+
+<head>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+</head>
+<body>
+    <div class="container-full">
+        <div class="row">
+            <div class="col-md-8 offset-4">
+                <h1>Metaphor</h1>
+            </div>
+        </div>
+        <div class="row">
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        </div>
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form action="metaphorize" method="post">
+                {% csrf_token %}
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="submit">Metaphorize!</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 offset-3">
+                {% if metaphor_text %}
+                    <div class="metaphor">
+                        {{ metaphor_text }}
+                    </div>
+                    <div class="row">
+                        &lt;&lt;{{ sentence_text }}&gt;&gt; was the original sentence.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <footer class="fixed-bottom">
+        <div class="row">
+            <div class="col-md-2">
+                <a href="https://github.com/guiem/metaphor"><img src="{% static 'img/Octocat_50.png' %}"></img></a><span class="github">←wanna know moar?</span>
+            </div>
+            <div class="offset-4">
+                <span class="github">About Me: <a href="https://guiem.info">guiem.info</a></span>
+            </div>
+        </div>
+    </footer>
+</body>

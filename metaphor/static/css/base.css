@@ -1,0 +1,20 @@
+@import url(fonts.css);
+h1 {
+    color: #FCA205;
+    font-family: "ComingSoon",Verdana,Arial,sans-serif;
+    font-size: 100px;
+    padding-top:20%;
+}
+
+footer {
+    position: fixed;
+    height: 100px;
+    bottom: 0;
+    width: 100%;
+}
+
+/*
+.input-group-btn {
+    font-family: "AmaticSC",Verdana,Arial,sans-serif;
+}
+*/

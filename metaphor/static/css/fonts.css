@@ -1,0 +1,34 @@
+@font-face {
+    font-family: 'Lobster';
+    src: url('../fonts/Lobster-Regular.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AmaticSC';
+    src: url('../fonts/AmaticSC-Regular.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'ComingSoon';
+    src: url('../fonts/ComingSoon-Regular.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'PatrickHandSC';
+    src: url('../fonts/PatrickHandSC-Regular.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AnnieUseYourTelescope';
+    src: url('../fonts/AnnieUseYourTelescope-Regular.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
