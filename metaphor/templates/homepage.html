@@ -29,10 +29,16 @@
         </div>
         <div class="row">
             <div class="col-md-6 offset-3">
-                {% if metaphor_text %}
+                {% if lang == "English" %}
                     <div class="metaphor">
                         {{ metaphor_text }}
                     </div>
+                {% elif lang %}
+                    <div class="error_text">
+                        Sorry! Right now I only process English sentences. I sense some {{lang}} ;) Want to know how language is detected? <a href="https://github.com/guiem">Enlighten me!</a>
+                    </div>
+                {% endif %}
+                {% if sentence_text %}
                     <div class="row">
                         &lt;&lt;{{ sentence_text }}&gt;&gt; was the original sentence.
                     </div>
