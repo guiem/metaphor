@@ -1,0 +1,44 @@
+(lp0
+S'Life is a tale, told by an idiot, full of sound and fury, signifying nothing.'
+p1
+aS'All my life I thought air was free, until I bought a bag of chips.'
+p2
+aS'A day without sunshine is like..., you know, night.'
+p3
+aS'Common sense is like deodorant, those who need it the most never use it.'
+p4
+aS'A relationship without trust is like a cell phone with no service, all you can do is play games.'
+p5
+aS"Cleaning the house while your kids are still home is like shoveling while it's still snowing."
+p6
+aS'My boss is like a baby, screams and wakes me up every half hour.'
+p7
+aS'Duct tape is like the force. It has a light side, a dark side, and it holds the world together.'
+p8
+aS'Cavities are like parking tickets, they show up by surprise and take all your pocket money.'
+p9
+aS'Friendship is like peeing on yourself: everyone can see it, but only you get the warm feeling that it brings.'
+p10
+aS'Her face was a perfect oval, like a circle that had its two sides gently compressed by a ThighMaster.'
+p11
+aS'His thoughts tumbled in his head, making and breaking alliances like underpants in a dryer without Cling Free.'
+p12
+aS'She grew on him like she was a colony of E. Coli, and he was room-temperature Canadian beef.'
+p13
+aS'She had a deep, throaty, genuine laugh, like that sound a dog makes just before it throws up.'
+p14
+aS'Her vocabulary was as bad as, like, whatever.'
+p15
+aS'He was as tall as a six-foot, three-inch tree.'
+p16
+aS'The little boat gently drifted across the pond exactly the way a bowling ball wouldn\xe2\x80\x99t.'
+p17
+aS'Her hair glistened in the rain like a nose hair after a sneeze.'
+p18
+aS'Shots rang out, as shots are wont to do.'
+p19
+aS'The ballerina rose gracefully en Pointe and extended one slender leg behind her, like a dog at a fire hydrant.'
+p20
+aS'He was deeply in love. When she spoke, he thought he heard bells, as if she were a garbage truck backing up.'
+p21
+a.

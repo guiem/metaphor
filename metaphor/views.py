@@ -3,17 +3,16 @@ from django.shortcuts import render
 from django.utils import timezone
 from metaphor.models import Sentence
 from metaphor.utils import get_language
-import random
+from metaphor.settings import BASE_DIR
+
+import random,pickle,os
 
 def index(request):
     return render(request, 'homepage.html')
 
 def random_metaphor(sentence_text):
-    life_metaphors = [
-        "Life is a tale, told by an idiot, full of sound and fury, signifying nothing.",
-        "All my life I thought air was free, until I bought a bag of chips.",
-        "A day without sunshine is like..., you know, night.",
-    ]
+    file_path = os.path.join(BASE_DIR,'metaphor/static/metaphors/metaphors.pkl')
+    life_metaphors = pickle.load(open(file_path,"rb"))
     return life_metaphors[random.randint(1,len(life_metaphors)-1)]
 
 def is_a_metaphor(sentence_text):
@@ -31,9 +30,9 @@ def create_metaphor(sentence_text, strategy="random"):
     return ""
 
 def metaphorize(request):
-    sentence_text = request.POST['sentence']
-    if not sentence_text:
+    if not request.POST.get('sentence'):
         return render(request,'homepage.html')
+    sentence_text = request.POST['sentence']
     remote_addr = request.META.get('REMOTE_ADDR')
     lang = get_language(sentence_text)
     metaphor_text = None
