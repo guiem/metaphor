@@ -1,7 +1,10 @@
 Django==1.11.6
 gunicorn==19.7.1
 nltk==3.2.5
+numpy==1.13.3
+pandas==0.21.0
 psycopg2==2.7.3.1
+python-dateutil==2.6.1
 pytz==2017.2
 six==1.11.0
 wheel==0.26.0
