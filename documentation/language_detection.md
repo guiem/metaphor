@@ -23,4 +23,4 @@ Example:
 "___The__ weather __is__ amazing!_" <-- 2 stop words in English ("the","is"), 0 stop words in Spanish. Therefore we say the sentence is in English. 
 
 Jump to code
-https://github.com/guiem/metaphor/blob/master/metaphor/utils.py#L5
+https://github.com/guiem/metaphor/blob/master/metaphor/utils.py#L7
