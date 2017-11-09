@@ -29,6 +29,6 @@ def get_nouns(text):
 
 def get_random_connectors(num):
     connectors = ['and','whereas','on the other hand','yet','likewise','similarly','also','for one thing',
-        'for another thing','in addition','furthermore','in other words','meanwhile']
+        'for another thing','in addition','. Furthermore, ','. In other words, ','meanwhile']
     selection = [connectors[random.randint(1,len(connectors)-1)] for i in range(0,num)]
     return selection
