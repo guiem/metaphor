@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
-from metaphor.models import Sentence
+from metaphor.models import Sentence,Dictionary
 from metaphor.utils import get_language,get_nouns,get_random_connectors
 from metaphor.settings import BASE_DIR
 
@@ -16,17 +16,15 @@ def random_metaphor(sentence_text):
     return life_metaphors[random.randint(1,len(life_metaphors)-1)]
 
 def is_a_metaphor(sentence_text):
-    file_path = os.path.join(BASE_DIR,'metaphor/static/dicts/words.pkl')
-    nouns,adjectives = pickle.load(open(file_path,"rb"))
     nouns_list = get_nouns(sentence_text)
     metaphors = []
     if not nouns_list:
         return random_metaphor(sentence_text)
     for idx,noun in enumerate(nouns_list):
-        adjective = adjectives[random.randint(1,len(adjectives)-1)].lower()
-        a_adjective = 'n' if adjective.startswith('a') else ''
-        new_noun = nouns[random.randint(1,len(nouns)-1)].lower()
-        metaphor = "{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
+        adjective = Dictionary.objects.random(word_type='a.')
+        a_adjective = 'n' if adjective.word.startswith('a') else ''
+        new_noun = Dictionary.objects.random()
+        metaphor = "{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective.word,new_noun.word)
         metaphors.append(metaphor)
     connectors = get_random_connectors(len(metaphors))
     return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])
