@@ -32,9 +32,9 @@
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item disabled" href="#">STRATEGY</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" value='random'>Random</a>
-                                <a class="dropdown-item active" href="#" value='is_a'>Is-a</a>
-                                <a class="dropdown-item disabled" href="#">AI</a>
+                                <a class="dropdown-item" href="#" value='random' data-toggle="tooltip" data-html="true" data-placement="left" title="Returns a random metaphor.">Random</a>
+                                <a class="dropdown-item active" href="#" value='is_a' data-toggle="tooltip" data-html="true" data-placement="left" title='Detects <strong>nouns</strong> in your sentence using NLP and generates a metaphor following this structure: "<em>your_noun IS A random_adjective + random_noun</em>".'>Is-a</a>
+                                <a class="dropdown-item disabled" href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="Artificial Intelligence approach, not ready yet! ;)">AI</a>
                             </div>
                         </div>
                     </div>
@@ -72,6 +72,8 @@
     </footer>
 </body>
 <script>
+    $('.dropdown-item').tooltip();
+
     $(".dropdown-item").on("click", function() {
       $(".dropdown-item").removeClass("active");
       $(this).addClass("active");
