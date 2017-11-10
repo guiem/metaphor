@@ -21,10 +21,10 @@ def is_a_metaphor(sentence_text):
     if not nouns_list:
         return random_metaphor(sentence_text)
     for idx,noun in enumerate(nouns_list):
-        adjective = Dictionary.objects.random(word_type='a.').lower()
-        a_adjective = 'n' if adjective.word.startswith('a') else ''
-        new_noun = Dictionary.objects.random().lower()
-        metaphor = "{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective.word,new_noun.word)
+        adjective = Dictionary.objects.random(word_type='a.').word.lower()
+        a_adjective = 'n' if adjective.startswith('a') else ''
+        new_noun = Dictionary.objects.random().word.lower()
+        metaphor = "{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
         metaphors.append(metaphor)
     connectors = get_random_connectors(len(metaphors))
     return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])
