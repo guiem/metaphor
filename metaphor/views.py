@@ -27,9 +27,9 @@ def is_a_metaphor(sentence_text):
         metaphor = "{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
         metaphors.append(metaphor)
     connectors = get_random_connectors(len(metaphors))
-    return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])
+    return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])+"."
 
-def create_metaphor(sentence_text, strategy="random"):
+def create_metaphor(sentence_text, strategy="is_a"):
     if strategy == "random":
         return random_metaphor(sentence_text)
     elif strategy == "is_a":
@@ -43,10 +43,11 @@ def metaphorize(request):
         return render(request,'homepage.html')
     sentence_text = request.POST['sentence']
     remote_addr = request.META.get('REMOTE_ADDR')
+    strategy = request.POST['strategy']
     lang = get_language(sentence_text)
     metaphor_text = None
     if lang and lang == 'English':
-        metaphor_text = create_metaphor(sentence_text,strategy='is_a')
+        metaphor_text = create_metaphor(sentence_text,strategy=strategy)
         sentence = Sentence(sentence_text=sentence_text,metaphor_text=metaphor_text,req_date=timezone.now(),remote_addr=remote_addr)
         sentence.save()
     context = {

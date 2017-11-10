@@ -3,6 +3,9 @@
 <head>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </head>
 <body>
     <div class="container-full">
@@ -19,10 +22,21 @@
                 <form action="metaphorize" method="post">
                 {% csrf_token %}
                     <div class="input-group input-group-lg">
-                        <input type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)" />
-                        <span class="input-group-btn">
-                            <button class="btn btn-secondary" type="submit">Metaphorize!</button>
-                        </span>
+                        <input type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
+                        <input id="strategy-hidden" type="hidden" name="strategy" value="is_a">
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-secondary">Metaphorize!</button>
+                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item disabled" href="#">STRATEGY</a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" value='random'>Random</a>
+                                <a class="dropdown-item active" href="#" value='is_a'>Is-a</a>
+                                <a class="dropdown-item disabled" href="#">AI</a>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -57,3 +71,16 @@
         </div>
     </footer>
 </body>
+<script>
+    $(".dropdown-item").on("click", function() {
+      $(".dropdown-item").removeClass("active");
+      $(this).addClass("active");
+      text = $(this)[0].text;
+      if (text == 'Random') {
+        document.getElementById('strategy-hidden').value='random';
+      }
+      else if (text == 'Is-a') {
+        document.getElementById('strategy-hidden').value='is_a';
+      }
+    });
+</script>

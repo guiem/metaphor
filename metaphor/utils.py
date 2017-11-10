@@ -22,13 +22,13 @@ def get_language(text):
 
 def get_nouns(text):
     nouns = []
-    for word,pos in pos_tag(word_tokenize(str(text))):
+    for word,pos in pos_tag(word_tokenize(text)):
         if (pos == 'NN' or pos == 'NNP' or pos == 'NNS' or pos == 'NNPS'):
             nouns.append(word)
     return nouns
 
 def get_random_connectors(num):
-    connectors = ['and','whereas','on the other hand','yet','likewise','similarly','also','for one thing',
-        'for another thing','in addition','. Furthermore, ','. In other words, ','meanwhile']
+    connectors = ['and','whereas',', on the other hand','yet','likewise','similarly','also','for one thing',
+        ', for another thing','. In addition,','. Furthermore, ','. In other words, ','meanwhile']
     selection = [connectors[random.randint(1,len(connectors)-1)] for i in range(0,num)]
     return selection
