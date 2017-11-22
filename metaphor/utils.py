@@ -32,3 +32,11 @@ def get_random_connectors(num):
         ', for another thing','. In addition,','. Furthermore, ','. In other words, ','meanwhile']
     selection = [connectors[random.randint(1,len(connectors)-1)] for i in range(0,num)]
     return selection
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

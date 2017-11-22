@@ -2,7 +2,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from metaphor.models import Sentence,Dictionary
-from metaphor.utils import get_language,get_nouns,get_random_connectors
+from metaphor.utils import get_language,get_nouns,get_random_connectors,get_client_ip
 from metaphor.settings import BASE_DIR
 
 import random,pickle,os
@@ -42,7 +42,7 @@ def metaphorize(request):
     if not request.POST.get('sentence'):
         return render(request,'homepage.html')
     sentence_text = request.POST['sentence']
-    remote_addr = request.META.get('REMOTE_ADDR')
+    remote_addr = get_client_ip(request) #request.META.get('REMOTE_ADDR')
     strategy = request.POST['strategy']
     lang = get_language(sentence_text)
     metaphor_text = None
