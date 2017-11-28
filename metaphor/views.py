@@ -24,7 +24,7 @@ def is_a_metaphor(sentence_text):
         adjective = Dictionary.objects.random(word_type='a.').word.lower()
         a_adjective = 'n' if adjective.startswith('a') else ''
         new_noun = Dictionary.objects.random().word.lower()
-        metaphor = "{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
+        metaphor = u"{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
         metaphors.append(metaphor)
     connectors = get_random_connectors(len(metaphors))
     return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])+"."
