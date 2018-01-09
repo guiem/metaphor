@@ -6,27 +6,24 @@
     <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
     <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="container-full">
-        <div class="row">
-            <div class="col-md-4 offset-4">
-                <h1 class="text-center">Metaphor</h1>
-            </div>
-        </div>
+    <div class="container">
+        <h1 class="display-3 text-center">Metaphor</h1>
         <div class="row">
             {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         </div>
         <div class="row">
-            <div class="col-md-8 offset-2 mt-5">
+            <div class="col-md-12 mt-5">
                 <form action="metaphorize" method="post">
                 {% csrf_token %}
-                    <div class="input-group input-group-lg">
-                        <input type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
+                    <div class="input-group">
+                        <input id="sentence-input" type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
                         <input id="strategy-hidden" type="hidden" name="strategy" value="is_a">
                         <div class="input-group-btn">
                             <button type="submit" class="btn btn-secondary">Metaphorize!</button>
-                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
@@ -42,18 +39,18 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6 offset-3">
+            <div class="col-md-12">
                 {% if lang == "English" %}
-                    <div class="metaphor mt-3">
+                    <div class="metaphor text-center mt-3">
                         {{ metaphor_text }}
                     </div>
                 {% elif lang %}
-                    <div class="error_text mt-5">
+                    <div class="error_text text-center mt-5">
                         Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
                     </div>
                 {% endif %}
                 {% if sentence_text %}
-                    <div class="row mt-5">
+                    <div class="text-center mt-5">
                         &lt;&lt;{{ sentence_text }}&gt;&gt; was the original sentence.
                     </div>
                 {% endif %}
@@ -85,4 +82,9 @@
         document.getElementById('strategy-hidden').value='is_a';
       }
     });
+    
+    if ($(window).width() < 400 ) {
+    $("input[id='sentence-input']").attr("placeholder","Your sentence...");
+    }
+    else { $("input[id='sentence-input']").attr("placeholder","Input a sentence and become a cheeky poet! ;)");}
 </script>
