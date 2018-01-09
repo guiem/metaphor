@@ -5,15 +5,20 @@ from metaphor.models import Sentence,Dictionary
 from metaphor.utils import get_language,get_nouns,get_random_connectors,get_client_ip
 from metaphor.settings import BASE_DIR
 
-import random,pickle,os
+import random
+import pickle
+import os
+
 
 def index(request):
     return render(request, 'homepage.html')
+
 
 def random_metaphor(sentence_text):
     file_path = os.path.join(BASE_DIR,'metaphor/static/metaphors/metaphors.pkl')
     life_metaphors = pickle.load(open(file_path,"rb"))
     return life_metaphors[random.randint(1,len(life_metaphors)-1)]
+
 
 def is_a_metaphor(sentence_text):
     nouns_list = get_nouns(sentence_text)
@@ -29,6 +34,7 @@ def is_a_metaphor(sentence_text):
     connectors = get_random_connectors(len(metaphors))
     return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])+"."
 
+
 def create_metaphor(sentence_text, strategy="is_a"):
     if strategy == "random":
         return random_metaphor(sentence_text)
@@ -37,6 +43,7 @@ def create_metaphor(sentence_text, strategy="is_a"):
     else:
         pass
     return ""
+
 
 def metaphorize(request):
     if not request.POST.get('sentence'):
