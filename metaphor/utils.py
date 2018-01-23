@@ -4,6 +4,9 @@ from nltk import pos_tag
 from collections import defaultdict
 import random
 
+CONNECTORS = ['and','whereas',', on the other hand','yet','likewise','similarly','also','for one thing',
+        ', for another thing','. In addition,','. Furthermore, ','. In other words, ','meanwhile']
+
 def get_language(text):
     score = defaultdict(int)
     words = word_tokenize(text.lower())
@@ -27,10 +30,8 @@ def get_nouns(text):
             nouns.append(word)
     return nouns
 
-def get_random_connectors(num):
-    connectors = ['and','whereas',', on the other hand','yet','likewise','similarly','also','for one thing',
-        ', for another thing','. In addition,','. Furthermore, ','. In other words, ','meanwhile']
-    selection = [connectors[random.randint(1,len(connectors)-1)] for i in range(0,num)]
+def get_random_connectors(num): 
+    selection = [CONNECTORS[random.randint(1,len(CONNECTORS)-1)] for i in range(0,num)]
     return selection
 
 def get_client_ip(request):
