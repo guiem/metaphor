@@ -18,10 +18,10 @@ def get_language(text):
                 score[lang] += 1
     if score:
         max_value = max(score.values())
-        if max_value > 1:
+        if max_value > 0:
             max_keys = [k.capitalize() for k,val in score.iteritems() if val == max_value]
             return (' or ').join(max_keys)
-    return 'English'
+    return "NA"
 
 def get_nouns(text):
     nouns = []

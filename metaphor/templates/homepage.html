@@ -44,9 +44,13 @@
                     <div class="metaphor text-center mt-3">
                         {{ metaphor_text }}
                     </div>
-                {% elif lang %}
+                {% elif lang and lang != "NA"%}
                     <div class="error_text text-center mt-5">
                         Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
+                    </div>
+                {% elif lang == "NA" %}
+                    <div class="error_text text-center mt-5">
+                        OMG, please give me some nice sentences to metaphorize! This was meaningless... 😅
                     </div>
                 {% endif %}
                 {% if sentence_text %}
