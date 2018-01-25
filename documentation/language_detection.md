@@ -23,14 +23,16 @@ Example:
 "___The__ weather __is__ amazing!_" <-- 2 stop words in English ("the","is"), 0 stop words in Spanish. Therefore we say the sentence is in English.  
 
 Jump to code
-https://github.com/guiem/metaphor/blob/master/metaphor/utils.py#L7
+https://github.com/guiem/metaphor/blob/master/metaphor/utils.py#L10
 
 ## First issues
 The language detector has been tested on the human rights declaration in different languages sentence by sentence.
 Once we get to the numbers we see that the function is only __62%__ accurate. But this is not a big surprise when we print the kind of sentences that make it fail:
 
 "Artículo 24", Spanish
+
 "Article 24", French
+
 "Artikel 24", German
 
 There are no stopwords in such short pieces of text!
