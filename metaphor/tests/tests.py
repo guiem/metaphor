@@ -3,7 +3,19 @@ from metaphor.utils import get_random_connectors
 from metaphor.utils import get_language
 from metaphor.utils import CONNECTORS
 from metaphor.settings import BASE_DIR
+from metaphor.models import Dictionary
 import os
+
+class ModelsTest(TestCase):
+    
+    def setUp(self):
+        Dictionary.objects.create(word="beautiful",word_type="a.")
+        Dictionary.objects.create(word="cat",word_type="n.")
+    
+    # ./manage.py test metaphor.tests.tests.ModelsTest.test_dictionary_random
+    def test_dictionary_random(self):
+        a = Dictionary.objects.random(word_type='a.').word.lower()
+        self.assertEqual(a,"beautiful")
 
 class UtilsTest(TestCase):
     

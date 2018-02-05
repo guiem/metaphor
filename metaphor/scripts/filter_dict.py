@@ -3,7 +3,7 @@ import pickle,os
 from metaphor.models import Dictionary
 from metaphor.settings import BASE_DIR
 
-file_path = os.path.join(BASE_DIR,'metaphor/static/dicts/bragitoff_dict.csv')
+file_path = os.path.join(BASE_DIR,'static/dicts/bragitoff_dict.csv')
 df = pd.read_csv(file_path,names=['word','type','definition'])
 
 nouns = df[df.type=='n.']['word'].tolist()

@@ -15,8 +15,8 @@ def index(request):
 
 
 def random_metaphor(sentence_text):
-    file_path = os.path.join(BASE_DIR,'metaphor/static/metaphors/metaphors.pkl')
-    life_metaphors = pickle.load(open(file_path,"rb"))
+    file_path = os.path.join(BASE_DIR,'static/metaphors/metaphors.pkl')
+    life_metaphors = pickle.load(open(file_path,"rb"),encoding='utf-8')
     return life_metaphors[random.randint(1,len(life_metaphors)-1)]
 
 
