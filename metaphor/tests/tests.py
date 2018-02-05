@@ -26,13 +26,13 @@ class UtilsTest(TestCase):
             ,'nn':'Norwegian','pt':'Portuguese','ru':'Russian','sv':'Swedish','tr':'Turkish'}
         res = {}
         total_ok = total_ko = 0
-        for lang in os.listdir("{}/metaphor/tests/lang_texts/".format(BASE_DIR)):
+        for lang in os.listdir("{}/tests/lang_texts/".format(BASE_DIR)):
             if lang in langs_to_test:
                 res[lang] = {'ok':0,'ko':0}
-                with open("{}/metaphor/tests/lang_texts/{}/{}.txt".format(BASE_DIR,lang,lang), 'r') as f:
+                with open("{}/tests/lang_texts/{}/{}.txt".format(BASE_DIR,lang,lang), 'r') as f:
                     for line in f.readlines():
                         if line != '\n' and len(line.split()) > 2: # we require more than two words in the sentence
-                            text = line.replace("\n","").decode('utf-8')
+                            text = line.replace("\n","")
                             l = get_language(text)
                             if langs_dict[lang] in l:
                                 res[lang]['ok'] += 1

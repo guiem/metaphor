@@ -13,13 +13,13 @@ def get_language(text):
     stopwords.ensure_loaded
     stopwords_dict = {lang:stopwords.words(lang) for lang in stopwords.__dict__.get('_fileids')}
     for word in words:
-        for lang,stop_list in stopwords_dict.iteritems():
+        for lang,stop_list in stopwords_dict.items():
             if word in stop_list:
                 score[lang] += 1
     if score:
         max_value = max(score.values())
         if max_value > 0:
-            max_keys = [k.capitalize() for k,val in score.iteritems() if val == max_value]
+            max_keys = [k.capitalize() for k,val in score.items() if val == max_value]
             return (' or ').join(max_keys)
     return "NA"
 
