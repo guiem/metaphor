@@ -38,6 +38,6 @@ There are no stopwords in such short pieces of text!
 Possible solutions:
 1. Go for the Machine Learning approach and feed the system with ginormous amounts of labeled text
 2. Still avoid ML and store dictionaries (or connect to dictionaries online) and check to what language the words belong to.
-3. Keeping it simple! We can make the system require a minimum number of words (or _propper_ sentences) in order to create a metaphor. 
+3. Keeping it simple! We can make the system require a minimum number of words (or _proper_ sentences) in order to create a metaphor. 
 
 Because the scope of this project is not about language detection, we'll choose number 3 and leave improvement for later ;-)
