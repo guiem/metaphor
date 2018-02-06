@@ -67,7 +67,7 @@ class UtilsTest(TestCase):
         """
         lang = get_language("Hola")
         self.assertEqual(lang,"NA")
-        lang = get_language("El sol de la vida")
+        lang = get_language("Tú eres el sol de mi vida")
         self.assertEqual(lang,"Spanish")
         lang = get_language("House house house house")
         self.assertEqual(lang,"NA")
