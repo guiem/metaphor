@@ -1,9 +1,16 @@
 @import url(fonts.css);
+
 h1 {
     color: #FCA205;
     font-family: "Comfortaa-Bold",Verdana,Arial,sans-serif;
-    /*font-size: 100px;*/
     padding-top:20%;
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size:64px !important;
+        /*color: #550077;*/
+    }
 }
 
 footer {

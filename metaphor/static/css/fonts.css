@@ -40,6 +40,12 @@
 }
 
 @font-face {
+    font-family: 'Comfortaa-Regular';
+    src: url('../fonts/Comfortaa-Regular.ttf');
+    font-weight: 700;
+}
+
+@font-face {
     font-family: 'Bellefair-Regular';
     src: url('../fonts/Bellefair-Regular.ttf');
     font-weight: 700;
