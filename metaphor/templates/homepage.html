@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="display-3 text-center">Metaphor</h1>
+        <h1 class="display-3 text-center"><font color="black">Meta</font>phor</h1>
         <div class="row">
             {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         </div>
@@ -46,7 +46,7 @@
                     </div>
                 {% elif lang and lang != "NA"%}
                     <div class="error_text text-center mt-5">
-                        Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
+                        Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Do you want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
                     </div>
                 {% elif lang == "NA" %}
                     <div class="error_text text-center mt-5">
@@ -64,10 +64,10 @@
     <footer class="fixed-bottom">
         <div class="row">
             <div class="col-md-3">
-                <a href="https://github.com/guiem/metaphor"><img src="{% static 'img/Octocat_50.png' %}"></img></a><span class="github">←wanna know moar?</span>
+                <a href="https://github.com/guiem/metaphor"><img src="{% static 'img/Octocat_50.png' %}"></img></a>
             </div>
             <div class="col-md-4 offset-1">
-                <p class="github text-center">About Me: <a href="https://guiem.info">guiem.info</a></p>
+                <p class="text-center">About Me: <a href="https://guiem.info">guiem.info</a></p>
             </div>
         </div>
     </footer>
