@@ -1,77 +1,74 @@
 {% load staticfiles %}
-
-<head>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
-    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
-    <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-    <div class="container">
-        <h1 class="display-3 text-center"><font color="black">Meta</font>phor</h1>
-        <div class="row">
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        </div>
-        <div class="row">
-            <div class="col-md-12 mt-5">
-                <form action="metaphorize" method="post">
-                {% csrf_token %}
-                    <div class="input-group">
-                        <input id="sentence-input" type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
-                        <input id="strategy-hidden" type="hidden" name="strategy" value="is_a">
-                        <div class="input-group-btn">
-                            <button type="submit" class="btn btn-secondary">Metaphorize!</button>
-                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item disabled" href="#">STRATEGY</a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" value='random' data-toggle="tooltip" data-html="true" data-placement="left" title="Returns a random metaphor.">Random</a>
-                                <a class="dropdown-item active" href="#" value='is_a' data-toggle="tooltip" data-html="true" data-placement="left" title='Detects <strong>nouns</strong> in your sentence using NLP and generates a metaphor following this structure: "<em>your_noun IS A random_adjective + random_noun</em>".'>Is-a</a>
-                                <a class="dropdown-item disabled" href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="Artificial Intelligence approach, not ready yet! ;)">AI</a>
+<html>
+    <head>
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+        <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="display-3 text-center"><font color="black">Meta</font>phor</h1>
+            <div class="row">
+                {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-12 mt-5">
+                    <form action="metaphorize" method="post">
+                    {% csrf_token %}
+                        <div class="input-group">
+                            <input id="sentence-input" type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
+                            <input id="strategy-hidden" type="hidden" name="strategy" value="is_a">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-secondary">Metaphorize!</button>
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item disabled" href="#">STRATEGY</a>
+                                    <div role="separator" class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" value='random' data-toggle="tooltip" data-html="true" data-placement="left" title="Returns a random metaphor.">Random</a>
+                                    <a class="dropdown-item active" href="#" value='is_a' data-toggle="tooltip" data-html="true" data-placement="left" title='Detects <strong>nouns</strong> in your sentence using NLP and generates a metaphor following this structure: "<em>your_noun IS A random_adjective + random_noun</em>".'>Is-a</a>
+                                    <a class="dropdown-item disabled" href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="Artificial Intelligence approach, not ready yet! ;)">AI</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% if lang == "English" %}
+                        <div class="metaphor text-center mt-3">
+                            {{ metaphor_text }}
+                        </div>
+                    {% elif lang and lang != "NA"%}
+                        <div class="error_text text-center mt-5">
+                            Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Do you want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
+                        </div>
+                    {% elif lang == "NA" %}
+                        <div class="error_text text-center mt-5">
+                            OMG, please give me some nice sentences to metaphorize! This was meaningless... 😅
+                        </div>
+                    {% endif %}
+                    {% if sentence_text %}
+                        <div class="text-center mt-5">
+                            &lt;&lt;{{ sentence_text }}&gt;&gt; was the original sentence.
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                {% if lang == "English" %}
-                    <div class="metaphor text-center mt-3">
-                        {{ metaphor_text }}
-                    </div>
-                {% elif lang and lang != "NA"%}
-                    <div class="error_text text-center mt-5">
-                        Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Do you want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
-                    </div>
-                {% elif lang == "NA" %}
-                    <div class="error_text text-center mt-5">
-                        OMG, please give me some nice sentences to metaphorize! This was meaningless... 😅
-                    </div>
-                {% endif %}
-                {% if sentence_text %}
-                    <div class="text-center mt-5">
-                        &lt;&lt;{{ sentence_text }}&gt;&gt; was the original sentence.
-                    </div>
-                {% endif %}
+        <footer class="footer">
+            <div class="container text-center">
+                <p class="text-muted"><a href="https://guiem.info">guiem.info</a> | <a class=github href="https://github.com/guiem/metaphor">GitHub</a></p>
             </div>
-        </div>
-    </div>
-    <footer class="fixed-bottom">
-        <div class="row">
-            <div class="col-md-3">
-                <a href="https://github.com/guiem/metaphor"><img src="{% static 'img/Octocat_50.png' %}"></img></a>
-            </div>
-            <div class="col-md-4 offset-1">
-                <p class="text-center">About Me: <a href="https://guiem.info">guiem.info</a></p>
-            </div>
-        </div>
-    </footer>
-</body>
+        </footer>
+    </body>
+</html>
+
 <script>
     $('.dropdown-item').tooltip();
 
