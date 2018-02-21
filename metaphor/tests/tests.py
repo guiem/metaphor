@@ -2,6 +2,7 @@ from django.test import TestCase
 from metaphor.utils import get_random_connectors
 from metaphor.utils import get_language
 from metaphor.utils import CONNECTORS
+from metaphor.views import is_a_metaphor
 from metaphor.settings import BASE_DIR
 from metaphor.models import Dictionary
 import os
@@ -16,6 +17,18 @@ class ModelsTest(TestCase):
     def test_dictionary_random(self):
         a = Dictionary.objects.random(word_type='a.').word.lower()
         self.assertEqual(a,"beautiful")
+
+class ViewsTest(TestCase):
+    
+    def setUp(self):
+        Dictionary.objects.create(word="unprecedented",word_type="a.")
+        Dictionary.objects.create(word="cat",word_type="n.")
+    
+    # ./manage.py test metaphor.tests.tests.ViewsTest.test_is_a_metaphor
+    def test_is_a_metaphor(self):
+        sentence = "Guiem is nice."
+        is_a = is_a_metaphor(sentence)
+        self.assertEqual(is_a,"Guiem is an unprecedented cat.")
 
 class UtilsTest(TestCase):
     
