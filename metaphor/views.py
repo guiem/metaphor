@@ -27,7 +27,7 @@ def is_a_metaphor(sentence_text):
         return random_metaphor(sentence_text)
     for idx,noun in enumerate(nouns_list):
         adjective = Dictionary.objects.random(word_type='a.').word.lower()
-        a_adjective = 'n' if adjective.startswith('a') else ''
+        a_adjective = 'n' if adjective.startswith(('a','e','i','o','u')) else ''
         new_noun = Dictionary.objects.random().word.lower()
         metaphor = u"{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
         metaphors.append(metaphor)
