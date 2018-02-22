@@ -8,7 +8,7 @@ h1 {
 
 @media screen and (max-width: 768px) {
     h1 {
-        font-size:64px !important;
+        font-size:54px !important;
         /*color: #550077;*/
     }
 }
