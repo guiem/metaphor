@@ -1,7 +1,6 @@
 # Metaphor
 
-![Coverage](https://github.com/guiem/metaphor/blob/master/metaphor/static/img/coverage-badge.svg)
-
+[![Coverage Status](https://coveralls.io/repos/github/guiem/metaphor/badge.svg)](https://coveralls.io/github/guiem/metaphor)
 Artificial Intelligence system to create metaphors.
 
 I :heart: literature & writing. I am also an Artificial Intelligence nerd. So I thought: "Y U NOT BUILT AUTOMATIC METAPHOR SYSTEM?" :trollface:
