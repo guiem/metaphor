@@ -1,6 +1,6 @@
 # Metaphor
 
-![Coverage](https://github.com/guiem/metaphor/tree/master/metaphor/static/img/coverage-badge.svg)
+![Coverage](https://github.com/guiem/metaphor/blob/master/metaphor/static/img/coverage-badge.svg)
 
 Artificial Intelligence system to create metaphors.
 
