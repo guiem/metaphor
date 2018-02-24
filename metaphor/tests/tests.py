@@ -2,37 +2,45 @@ from django.test import TestCase
 from metaphor.utils import get_random_connectors
 from metaphor.utils import get_language
 from metaphor.utils import CONNECTORS
-from metaphor.views import is_a_metaphor
+from metaphor.views import is_a_metaphor, random_metaphor
 from metaphor.settings import BASE_DIR
 from metaphor.models import Dictionary
+import pickle
 import os
+
 
 class ModelsTest(TestCase):
     
     def setUp(self):
-        Dictionary.objects.create(word="beautiful",word_type="a.")
+        Dictionary.objects.create(word="beautiful", word_type="a.")
         Dictionary.objects.create(word="cat",word_type="n.")
     
     # ./manage.py test metaphor.tests.tests.ModelsTest.test_dictionary_random
     def test_dictionary_random(self):
         a = Dictionary.objects.random(word_type='a.').word.lower()
-        self.assertEqual(a,"beautiful")
+        self.assertEqual(a, "beautiful")
+
 
 class ViewsTest(TestCase):
     
     def setUp(self):
-        Dictionary.objects.create(word="unprecedented",word_type="a.")
+        Dictionary.objects.create(word="unprecedented", word_type="a.")
         Dictionary.objects.create(word="cat",word_type="n.")
     
-    # ./manage.py test metaphor.tests.tests.ViewsTest.test_is_a_metaphor
     def test_is_a_metaphor(self):
         sentence = "Guiem is nice."
         is_a = is_a_metaphor(sentence)
-        self.assertEqual(is_a,"Guiem is an unprecedented cat.")
+        self.assertEqual(is_a, "Guiem is an unprecedented cat.")
+
+    def test_random_metaphor(self):
+        file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
+        life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
+        res = random_metaphor("trash")
+        self.assertIn(res,life_metaphors)
+
 
 class UtilsTest(TestCase):
     
-    # ./manage.py test metaphor.tests.tests.UtilsTest.test_get_random_connectors
     def test_get_random_connectors(self):
         for num_connectors in range(1,10):
             connectors = get_random_connectors(num_connectors)
@@ -40,7 +48,6 @@ class UtilsTest(TestCase):
             for con in connectors:
                 self.assertIn(con,CONNECTORS)
     
-    # ./manage.py test metaphor.tests.tests.UtilsTest.test_get_language_1
     def test_get_language_1(self):
         """
         Test on human rights declaration in different languages
@@ -73,7 +80,6 @@ class UtilsTest(TestCase):
         self.assertGreaterEqual(total_percent,percent_required)
         #print res
 
-    # ./manage.py test metaphor.tests.tests.UtilsTest.test_get_language_2
     def test_get_language_2(self):
         """
         Test on really simple examples. 
