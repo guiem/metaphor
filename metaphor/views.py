@@ -1,10 +1,9 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
-from metaphor.models import Sentence,Dictionary
-from metaphor.utils import get_language,get_nouns,get_random_connectors,get_client_ip
+from metaphor.models import Sentence, Dictionary
+from metaphor.utils import get_language, get_nouns, get_random_connectors, get_client_ip
 from metaphor.settings import BASE_DIR
-
 import random
 import pickle
 import os
@@ -14,30 +13,30 @@ def index(request):
     return render(request, 'homepage.html')
 
 
-def random_metaphor(sentence_text):
-    file_path = os.path.join(BASE_DIR,'static/metaphors/metaphors.pkl')
-    life_metaphors = pickle.load(open(file_path,"rb"),encoding='utf-8')
-    return life_metaphors[random.randint(1,len(life_metaphors)-1)]
+def random_metaphor():
+    file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
+    life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
+    return life_metaphors[random.randint(1, len(life_metaphors)-1)]
 
 
 def is_a_metaphor(sentence_text):
     nouns_list = get_nouns(sentence_text)
     metaphors = []
     if not nouns_list:
-        return random_metaphor(sentence_text)
-    for idx,noun in enumerate(nouns_list):
+        return random_metaphor()
+    for idx, noun in enumerate(nouns_list):
         adjective = Dictionary.objects.random(word_type='a.').word.lower()
-        a_adjective = 'n' if adjective.startswith(('a','e','i','o','u')) else ''
+        a_adjective = 'n' if adjective.startswith(('a', 'e', 'i', 'o', 'u')) else ''
         new_noun = Dictionary.objects.random().word.lower()
-        metaphor = u"{} is a{} {} {}".format(noun.capitalize(),a_adjective,adjective,new_noun)
+        metaphor = u"{} is a{} {} {}".format(noun.capitalize(), a_adjective, adjective, new_noun)
         metaphors.append(metaphor)
     connectors = get_random_connectors(len(metaphors))
-    return ' '.join([j for i in zip(metaphors,connectors) for j in i][:-1])+"."
+    return ' '.join([j for i in zip(metaphors, connectors) for j in i][:-1])+"."
 
 
 def create_metaphor(sentence_text, strategy="is_a"):
     if strategy == "random":
-        return random_metaphor(sentence_text)
+        return random_metaphor()
     elif strategy == "is_a":
         return is_a_metaphor(sentence_text)
     else:
@@ -47,15 +46,16 @@ def create_metaphor(sentence_text, strategy="is_a"):
 
 def metaphorize(request):
     if not request.POST.get('sentence'):
-        return render(request,'homepage.html')
+        return render(request, 'homepage.html')
     sentence_text = request.POST['sentence']
-    remote_addr = get_client_ip(request) #request.META.get('REMOTE_ADDR')
+    remote_addr = get_client_ip(request)  # request.META.get('REMOTE_ADDR')
     strategy = request.POST['strategy']
     lang = get_language(sentence_text)
     metaphor_text = None
     if lang and lang == 'English':
-        metaphor_text = create_metaphor(sentence_text,strategy=strategy)
-        sentence = Sentence(sentence_text=sentence_text,metaphor_text=metaphor_text,req_date=timezone.now(),remote_addr=remote_addr)
+        metaphor_text = create_metaphor(sentence_text, strategy=strategy)
+        sentence = Sentence(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
+                            remote_addr=remote_addr)
         sentence.save()
     context = {
         'metaphor_text': metaphor_text,

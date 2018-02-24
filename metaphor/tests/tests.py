@@ -35,7 +35,7 @@ class ViewsTest(TestCase):
     def test_random_metaphor(self):
         file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
         life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
-        res = random_metaphor("trash")
+        res = random_metaphor()
         self.assertIn(res, life_metaphors)
 
 
