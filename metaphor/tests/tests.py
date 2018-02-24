@@ -9,23 +9,26 @@ import pickle
 import os
 
 
+def create_database():
+    Dictionary.objects.create(word="unprecedented", word_type="a.")
+    Dictionary.objects.create(word="cat", word_type="n.")
+
+
 class ModelsTest(TestCase):
     
     def setUp(self):
-        Dictionary.objects.create(word="beautiful", word_type="a.")
-        Dictionary.objects.create(word="cat", word_type="n.")
+        create_database()
     
     # ./manage.py test metaphor.tests.tests.ModelsTest.test_dictionary_random
     def test_dictionary_random(self):
-        a = Dictionary.objects.random(word_type='a.').word.lower()
-        self.assertEqual(a, "beautiful")
+        a = Dictionary.objects.random(word_type='n.').word.lower()
+        self.assertEqual(a, "cat")
 
 
 class ViewsTest(TestCase):
     
     def setUp(self):
-        Dictionary.objects.create(word="unprecedented", word_type="a.")
-        Dictionary.objects.create(word="cat", word_type="n.")
+        create_database()
     
     def test_is_a_metaphor(self):
         sentence = "Guiem is nice."
