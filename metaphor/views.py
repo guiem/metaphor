@@ -1,4 +1,3 @@
-from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from metaphor.models import Sentence, Dictionary
