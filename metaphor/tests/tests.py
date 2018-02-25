@@ -1,6 +1,8 @@
 from django.test import TestCase
+from django.test.client import RequestFactory
 from metaphor.utils import get_random_connectors
 from metaphor.utils import get_language
+from metaphor.utils import get_client_ip
 from metaphor.utils import CONNECTORS
 from metaphor.views import is_a_metaphor, random_metaphor
 from metaphor.settings import BASE_DIR
@@ -43,6 +45,9 @@ class ViewsTest(TestCase):
 
 
 class UtilsTest(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
     
     def test_get_random_connectors(self):
         for num_connectors in range(1, 10):
@@ -106,3 +111,11 @@ class UtilsTest(TestCase):
         self.assertEqual(lang, "Arabic")
         lang = get_language("Ты мое солнце")
         self.assertEqual(lang, "Russian")
+
+    def test_get_client_ip(self):
+        request = self.factory.get('/metaphorize')
+        ip = get_client_ip(request)
+        self.assertEqual(ip, '127.0.0.1')
+        request.META = {'HTTP_X_FORWARDED_FOR': '69.69.69.69'}
+        ip = get_client_ip(request)
+        self.assertEqual(ip, '69.69.69.69')
