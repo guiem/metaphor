@@ -6,6 +6,8 @@ Artificial Intelligence system to create metaphors.
 
 I :heart: literature & writing. I am also an Artificial Intelligence nerd. So I thought: "Y U NOT BUILT AUTOMATIC METAPHOR SYSTEM?" :trollface:
 
-Here you'll find an attempt to build a text beautifier that's able to create new analogies. How?
+Here you'll find an attempt to build a text beautifier that's able to create new analogies. 
 
-* [Vector Representation of Words](https://en.wikipedia.org/wiki/Word2vec). This will be my first approach. Check the [notebooks](https://github.com/guiem/metaphor/blob/master/notebooks/word2vec_tutorial.ipynb) section to see progress.
+## How?
+
+Well, the main idea behind it are the [Word embeddings](https://en.wikipedia.org/wiki/Word_embedding). Check the [Metaphor's wiki](https://github.com/guiem/metaphor/wiki) and learn more!
