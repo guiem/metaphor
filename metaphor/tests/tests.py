@@ -4,7 +4,8 @@ from metaphor.utils import get_random_connectors
 from metaphor.utils import get_language
 from metaphor.utils import get_client_ip
 from metaphor.utils import CONNECTORS
-from metaphor.views import is_a_metaphor, random_metaphor
+from metaphor.views import is_a_metaphor, random_metaphor, word2vec_substitution
+from metaphor.ai.embeddings import Embeddings
 from metaphor.settings import BASE_DIR
 from metaphor.models import Dictionary
 import pickle
@@ -42,6 +43,13 @@ class ViewsTest(TestCase):
         life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
         res = random_metaphor()
         self.assertIn(res, life_metaphors)
+
+    def test_word2vec_substitution(self):
+        sentence = "I am a beautiful human being"
+        emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        metaphor = word2vec_substitution(sentence, num_neighbours=1, emb_info={'glove.6B.50d': {'path': emb_path, 'dim':
+                                                                                                50}})
+        self.assertEqual(metaphor, "I am a lovely animal being")
 
 
 class UtilsTest(TestCase):
@@ -119,3 +127,29 @@ class UtilsTest(TestCase):
         request.META = {'HTTP_X_FORWARDED_FOR': '69.69.69.69'}
         ip = get_client_ip(request)
         self.assertEqual(ip, '69.69.69.69')
+
+
+class AiTest(TestCase):
+
+    def test_embeddings_singleton(self):
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        e1 = Embeddings('Embeddings', emb = {'glove.6B.50d': {'path': file_path, 'dim':50}})
+        e2 = Embeddings('Embeddings')
+        self.assertEqual(e1, e2)
+
+    def test_embeddings_addition(self):
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        e = Embeddings('Embeddings')
+        self.assertEqual({}, e.embeddings)
+        e.add_embeddings({'glove.6B.50d': {'path': file_path, 'dim':50}})
+        self.assertNotEqual({}, e.embeddings)
+        self.assertAlmostEqual(-0.388916, e.get_E().loc['house'][41], 3)
+
+    def test_closest_n(self):
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim':50}})
+        closest_n = e.closest_n('sun', 5)
+        self.assertEquals(closest_n[0][0], 'sky')
+        self.assertAlmostEqual(closest_n[0][1], 0.6626, 3)
+        self.assertEquals(closest_n[2][0], 'bright')
+        self.assertAlmostEqual(closest_n[2][1], 0.6353, 3)

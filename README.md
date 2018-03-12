@@ -10,4 +10,4 @@ Here you'll find an attempt to build a text beautifier that's able to create new
 
 ## How?
 
-Well, the main idea behind it are the [Word embeddings](https://en.wikipedia.org/wiki/Word_embedding). Check the [Metaphor's wiki](https://github.com/guiem/metaphor/wiki) and learn more!
+Well, the main idea behind it consists of using [Word embeddings](https://en.wikipedia.org/wiki/Word_embedding). Check the [Metaphor's wiki](https://github.com/guiem/metaphor/wiki) and learn more!

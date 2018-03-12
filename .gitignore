@@ -99,3 +99,6 @@ metaphor_ENV/
 
 # PyCharm
 .idea
+
+# Metaphor data
+metaphor/data/glove.6B

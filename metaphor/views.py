@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.utils import timezone
 from metaphor.models import Sentence, Dictionary
-from metaphor.utils import get_language, get_nouns, get_random_connectors, get_client_ip
+from metaphor.utils import *
 from metaphor.settings import BASE_DIR
+from metaphor.ai.embeddings import Embeddings
 import random
 import pickle
 import os
@@ -19,7 +20,8 @@ def random_metaphor():
 
 
 def is_a_metaphor(sentence_text):
-    nouns_list = get_nouns(sentence_text)
+    nouns_tagged = get_PoS(sentence_text, PoS = NOUN_TAGS)
+    nouns_list = [n for n, tag in nouns_tagged]
     metaphors = []
     if not nouns_list:
         return random_metaphor()
@@ -33,11 +35,27 @@ def is_a_metaphor(sentence_text):
     return ' '.join([j for i in zip(metaphors, connectors) for j in i][:-1])+"."
 
 
+def word2vec_substitution(sentence_text, level=1, num_neighbours=5, emb_info={}):
+    if not emb_info:
+        emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50}}
+    e = Embeddings('Embeddings', emb = emb_info)
+    words_tagged = get_PoS(sentence_text, PoS = NOUN_TAGS.union(ADJECTIVE_TAGS))
+    for w, tag in words_tagged:
+        closest_n = e.closest_n(w, num_neighbours)
+        substitute = closest_n[np.random.randint(0, len(closest_n))]
+        sentence_text = sentence_text.replace(w, substitute[0])
+    return sentence_text
+
+# TODO: make vec_metaphor based on pairs adj-word (context), similar to analogy
+
 def create_metaphor(sentence_text, strategy="is_a"):
     if strategy == "random":
         return random_metaphor()
     elif strategy == "is_a":
         return is_a_metaphor(sentence_text)
+    elif strategy == "word2vec_substitution":
+        return word2vec_substitution(sentence_text)
     else:
         pass
     return ""

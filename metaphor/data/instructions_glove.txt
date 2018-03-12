@@ -1,0 +1,1 @@
+You can download the Glove data from here http://nlp.stanford.edu/data/glove.6B.zip, data too large to be shared on github
