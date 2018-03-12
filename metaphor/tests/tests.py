@@ -140,7 +140,6 @@ class AiTest(TestCase):
     def test_embeddings_addition(self):
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         e = Embeddings('Embeddings')
-        self.assertEqual({}, e.embeddings)
         e.add_embeddings({'glove.6B.50d': {'path': file_path, 'dim':50}})
         self.assertNotEqual({}, e.embeddings)
         self.assertAlmostEqual(-0.388916, e.get_E().loc['house'][41], 3)
