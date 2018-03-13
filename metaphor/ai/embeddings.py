@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import csv
+from gputils import cosine_similarity
 from metaphor.singleton import Singleton
 
 
@@ -27,17 +28,10 @@ class Embeddings(metaclass=Singleton):
             e_id = self.default_e
         return self.embeddings[e_id]
 
-    def cosine_similarity(self, word, e_id=None):
+    def closest_n(self, word, n, e_id=None):
         E = self.get_E(e_id)
         w = E.loc[word]
-        dot = E.dot(w.transpose())
-        norm_u = np.linalg.norm(E, axis=1)
-        norm_v = np.linalg.norm(w)
-        cosine_similarity = dot / (norm_u * norm_v)
-        return cosine_similarity
-
-    def closest_n(self, word, n, e_id=None):
-        sims = self.cosine_similarity(word, e_id=e_id)
+        sims = cosine_similarity(E, w)
         sims.loc[word] = 0  # little trick to avoid retrieving the word
         closest_n = sims.nlargest(n)
         return list(zip(closest_n.index.values, closest_n.values))
