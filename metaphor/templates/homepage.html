@@ -20,7 +20,7 @@
                     {% csrf_token %}
                         <div class="input-group">
                             <input id="sentence-input" type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
-                            <input id="strategy-hidden" type="hidden" name="strategy" value="is_a">
+                            <input id="strategy-hidden" type="hidden" name="strategy" value="is_a-random">
                             <div class="input-group-btn">
                                 <button type="submit" class="btn btn-secondary">Metaphorize!</button>
                                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,7 +30,7 @@
                                     <a class="dropdown-item disabled" href="#">STRATEGY</a>
                                     <div role="separator" class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#" value='random' data-toggle="tooltip" data-html="true" data-placement="left" title="Returns a random metaphor.">Random</a>
-                                    <a class="dropdown-item active" href="#" value='is_a' data-toggle="tooltip" data-html="true" data-placement="left" title='Detects <strong>nouns</strong> in your sentence using NLP and generates a metaphor following this structure: "<em>your_noun IS A random_adjective + random_noun</em>".'>Is-a</a>
+                                    <a class="dropdown-item active" href="#" value='is_a-random' data-toggle="tooltip" data-html="true" data-placement="left" title='Detects <strong>nouns</strong> in your sentence using NLP and generates a metaphor following this structure: "<em>your_noun IS A random_adjective + random_noun</em>".'>Is_a-random</a>
                                     <a class="dropdown-item disabled" href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="Artificial Intelligence approach, not ready yet! ;)">AI</a>
                                 </div>
                             </div>
@@ -79,8 +79,8 @@
       if (text == 'Random') {
         document.getElementById('strategy-hidden').value='random';
       }
-      else if (text == 'Is-a') {
-        document.getElementById('strategy-hidden').value='is_a';
+      else if (text == 'Is_a-random') {
+        document.getElementById('strategy-hidden').value='is_a-random';
       }
     });
     

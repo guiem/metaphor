@@ -49,12 +49,13 @@ def word2vec_substitution(sentence_text, level=1, num_neighbours=5, emb_info={})
 
 # TODO: make vec_metaphor based on pairs adj-word (context), similar to analogy
 
-def create_metaphor(sentence_text, strategy="is_a"):
+def create_metaphor(sentence_text, strategy="is_a-random"):
+    print(strategy)
     if strategy == "random":
         return random_metaphor()
-    elif strategy == "is_a":
+    elif strategy == "is_a-random":
         return is_a_metaphor(sentence_text)
-    elif strategy == "word2vec_substitution":
+    elif strategy == "word2vec_subst":
         return word2vec_substitution(sentence_text)
     else:
         pass
@@ -72,7 +73,7 @@ def metaphorize(request):
     if lang and lang == 'English':
         metaphor_text = create_metaphor(sentence_text, strategy=strategy)
         sentence = Metaphor(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
-                            remote_addr=remote_addr)
+                            remote_addr=remote_addr, strategy=strategy)
         sentence.save()
     context = {
         'metaphor_text': metaphor_text,

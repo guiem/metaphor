@@ -11,7 +11,12 @@ class Metaphor(models.Model):
     remote_addr = models.CharField(max_length=100)
     upvotes = models.IntegerField(default=0)
     downvotes = models.IntegerField(default=0)
-    
+
+    def _get_total_votes(self):
+        return self.upvotes - self.downvotes
+
+    total_votes = property(_get_total_votes)
+
 class DictionaryManager(models.Manager):
     def random(self,word_type='n.'):
         count = self.filter(word_type=word_type).aggregate(ids=Count('id'))['ids']
