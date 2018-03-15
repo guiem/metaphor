@@ -2,9 +2,11 @@ from django.db import models
 from django.db.models import Count
 from random import randint
 
-class Sentence(models.Model):
+
+class Metaphor(models.Model):
     sentence_text = models.CharField(max_length=1000)
     metaphor_text = models.CharField(max_length=1000)
+    strategy = models.CharField(max_length=1000)
     req_date = models.DateTimeField('date requested')
     remote_addr = models.CharField(max_length=100)
     

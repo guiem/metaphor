@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.utils import timezone
-from metaphor.models import Sentence, Dictionary
+from metaphor.models import Metaphor, Dictionary
 from metaphor.utils import *
 from metaphor.settings import BASE_DIR
 from metaphor.ai.embeddings import Embeddings
@@ -71,7 +71,7 @@ def metaphorize(request):
     metaphor_text = None
     if lang and lang == 'English':
         metaphor_text = create_metaphor(sentence_text, strategy=strategy)
-        sentence = Sentence(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
+        sentence = Metaphor(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
                             remote_addr=remote_addr)
         sentence.save()
     context = {
