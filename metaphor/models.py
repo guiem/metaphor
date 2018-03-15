@@ -9,6 +9,8 @@ class Metaphor(models.Model):
     strategy = models.CharField(max_length=1000)
     req_date = models.DateTimeField('date requested')
     remote_addr = models.CharField(max_length=100)
+    upvotes = models.IntegerField(default=0)
+    downvotes = models.IntegerField(default=0)
     
 class DictionaryManager(models.Manager):
     def random(self,word_type='n.'):
