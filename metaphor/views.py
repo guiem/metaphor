@@ -1,16 +1,26 @@
-from django.shortcuts import render
-from django.utils import timezone
 from metaphor.models import Metaphor, Dictionary
+from metaphor.decorators import check_recaptcha
 from metaphor.utils import *
 from metaphor.settings import BASE_DIR
 from metaphor.ai.embeddings import Embeddings
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+import numpy as np
 import random
 import pickle
 import os
 
 
 def index(request):
-    return render(request, 'homepage.html')
+    context = {'checked':'word2vec_subst'}
+    if request.POST:
+        return metaphorize(request)
+    return render(request, 'homepage.html', context)
+
+def strategies(request):
+    return render(request, 'strategies.html')
 
 
 def random_metaphor():
@@ -42,15 +52,16 @@ def word2vec_substitution(sentence_text, level=1, num_neighbours=5, emb_info={})
     e = Embeddings('Embeddings', emb = emb_info)
     words_tagged = get_PoS(sentence_text, PoS = NOUN_TAGS.union(ADJECTIVE_TAGS))
     for w, tag in words_tagged:
-        closest_n = e.closest_n(w, num_neighbours)
-        substitute = closest_n[np.random.randint(0, len(closest_n))]
-        sentence_text = sentence_text.replace(w, substitute[0])
+        if e.word_exists(w):
+            closest_n = e.closest_n(w, num_neighbours)
+            substitute = closest_n[np.random.randint(0, len(closest_n))]
+            sentence_text = sentence_text.replace(w, substitute[0])
     return sentence_text
 
 # TODO: make vec_metaphor based on pairs adj-word (context), similar to analogy
 
+
 def create_metaphor(sentence_text, strategy="is_a-random"):
-    print(strategy)
     if strategy == "random":
         return random_metaphor()
     elif strategy == "is_a-random":
@@ -70,14 +81,39 @@ def metaphorize(request):
     strategy = request.POST['strategy']
     lang = get_language(sentence_text)
     metaphor_text = None
-    if lang and lang == 'English':
-        metaphor_text = create_metaphor(sentence_text, strategy=strategy)
-        sentence = Metaphor(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
+    can_do = lang and 'English' in lang
+    if can_do:
+        metaphor_text = create_metaphor(sentence_text.lower(), strategy=strategy)
+        metaphor = Metaphor(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
                             remote_addr=remote_addr, strategy=strategy)
-        sentence.save()
+        metaphor.save()
     context = {
         'metaphor_text': metaphor_text,
         'sentence_text': sentence_text,
+        'can_do': can_do,
         'lang': lang,
+        'checked': strategy,
     }
     return render(request, 'homepage.html', context)
+
+
+def list_metaphors(request):
+    metaphor_list = Metaphor.objects.order_by('-total_votes')
+    paginator = Paginator(metaphor_list, 15)
+    page = request.GET.get('page')
+    metaphors = paginator.get_page(page)
+    return render(request, 'metaphors.html', {'metaphors': metaphors})
+
+@check_recaptcha
+def vote(request):
+    if request.recaptcha_is_valid:
+        metaphor_id = request.POST.get('metaphor_id')
+        direction = request.POST.get('direction')
+        metaphor = get_object_or_404(Metaphor, pk=metaphor_id)
+        if direction == 'up':
+            metaphor.upvotes = metaphor.upvotes + 1
+        elif direction == 'down':
+            metaphor.downvotes = metaphor.downvotes + 1
+        metaphor.total_votes = metaphor.upvotes - metaphor.downvotes
+        metaphor.save()
+    return HttpResponseRedirect("/metaphors")

@@ -28,6 +28,11 @@ class Embeddings(metaclass=Singleton):
             e_id = self.default_e
         return self.embeddings[e_id]
 
+    def word_exists(self, w, e_id=None):
+        if not e_id:
+            e_id = self.default_e
+        return w in self.embeddings[e_id].index
+
     def closest_n(self, word, n, e_id=None):
         E = self.get_E(e_id)
         w = E.loc[word]

@@ -3,14 +3,73 @@
 h1 {
     color: #FCA205;
     font-family: "Comfortaa-Bold",Verdana,Arial,sans-serif;
-    padding-top:20%;
+    padding-top:10%;
+}
+
+h2 {
+    color: #FCA205;
+    font-family: "Comfortaa-Bold",Verdana,Arial,sans-serif;
+    padding-top:5%;
+}
+
+hr {
+    margin-left: 10%;
+    margin-right: 10%;
+    opacity: 0.5;
+    border: 1 !important;
+    border-color: white;
+}
+
+
+@media screen and (min-width: 768px) {
+    .container[name=blog] {
+        max-width: 50%;
+    }
 }
 
 @media screen and (max-width: 768px) {
-    h1 {
+    h1[name="main-title"] {
         font-size:54px !important;
         /*color: #550077;*/
     }
+    .container[name=blog] {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+}
+
+.btn-primary.up {
+    color: #FFF !important;
+    background-color: #5fba7d !important;
+    border-color: #FFF !important;
+}
+
+.btn-primary.down {
+    color: #FFF !important;
+    background-color: #cc1111a3 !important;
+    border-color: #FFF !important;
+}
+
+.btn-primary.menu {
+    color: #FFF !important;
+    background-color: #000000ad !important;
+    border-color: #FFF !important;
+}
+
+.btn-primary:hover {
+    cursor: pointer;
+}
+
+optionsRadios:hover {
+    cursor: pointer !important;
+}
+
+.gohome {
+    color:#000 !important;
+}
+
+.strategies-set {
+    color: #fca205f2 !important;
 }
 
 /* Sticky footer styles

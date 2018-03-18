@@ -1,0 +1,111 @@
+<html>
+    {% include "head.html" %}
+    <body>
+        <div class="container" name="blog">
+            <h1 class="text-center">
+                <span class="pagination float-left"><a href="/"><i class="fas fa-arrow-left gohome"></i></a></span>
+                <font color="black">Meta</font>phor<font color="black"> Strategies</font>
+            </h1>
+
+            <h2>R<font color="black">andom</font></h2>
+            <div>
+                <p class="text-justify">
+                    Picks a totally random metaphor from a collection of metaphors. The result text is not related to
+                    the input sentence.
+                </p>
+                <p class="text-justify">
+                    It was originally created to test the website data flow, but it's been kept there because sometimes
+                        it's just nice to read metaphors 😉
+                </p>
+            </div>
+            <h2>I<font color="black">s a random (aka dumb)</font></h2>
+            <div>
+                <p class="text-justify">
+                    Detects nouns in your sentence using NLP
+                    <a href="https://en.wikipedia.org/wiki/Part-of-speech_tagging">PoS tagging</a> and generates a
+                    metaphor following this structure:
+                </p>
+                <p class="text-justify">
+                    "your_noun <span class="font-weight-bold">IS A</span> random_adjective + random_noun"
+                </p>
+                <p class="text-justify">
+                    The resultant metaphor is somehow related to the original input in the sense that it uses the nouns
+                    that appear in the input, but the metaphor won't make any sense due to its randomness.
+                </p>
+                <p class="text-justify">
+                    If the input sentence contains more than one noun, the IS A strategy will chain different metaphors
+                    using random connectors ('and', 'whereas', 'on the other hand', 'yet').
+                </p>
+                <p class="text-justify">
+                   It was originally created to test the noun PoS tagging using NLP.
+                </p>
+                <p class="text-justify">
+                    <span class="font-weight-bold">Examples</span>
+                </p>
+                <p class="text-justify">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Input instance</th>
+                                <th scope="col">Metaphor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="align-middle">The house is big</td>
+                                <td class="align-middle">House is a foresighted hink</td>
+                            </tr>
+                            <tr>
+                                <td class="align-middle">Her house was big with beautiful blue walls</td>
+                                <td class="align-middle">House is an unappliable fatherlessness . In other words, Blue
+                                    is a fibrillose recency yet Walls is an accelerando air</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </p>
+            </div>
+            <h2>W<font color="black">ords as vectors</font></h2>
+            <div>
+                <div class="alert alert-warning">
+                    <span class="font-weight-bold">Warning</span>: this project is still in a very exploratory phase.
+                    Don't expect any Shakespearean metaphors, and please bear in mind that the web might crash. Actually
+                    it would be very nice if you could send me feedback as github issues
+                    <a href="https://github.com/guiem/metaphor/issues">here</a>.
+                </div>
+                <p class="text-justify">
+                    For a general idea on how it works you can just check the documentation in the
+                    <a href="https://github.com/guiem/metaphor">project's github</a>.
+                </p>
+                <p class="text-justify">
+                    The system will be improved, there are minor and major approaches that can be taken. So far, just
+                    as an explicit example of my warning on how young the project is:
+                </p>
+                <p class="text-justify">
+                    <span class="font-weight-bold">Input sentence</span>: The old room was full of smoke.
+                </p>
+                <p class="text-justify">
+                    <span class="font-weight-bold">Output</span>: The man door was complete of smoke.
+                </p>
+                <div class="row justify-content-center">
+                    <img class="img-responsive w-50 h-50" src="/static/img/door_man.png"/>
+                </div>
+            </div>
+            <h2>M<font color="black">aster metaphor</font></h2>
+            <div>
+                <p class="text-justify">
+                    Do I hear <span class="font-italic">Thought Vectors</span>? 🙉
+                </p>
+                <div class="alert alert-info">
+                    Oh, please! Let me explore the other strategies first! This option is currently unavailable.
+                </div>
+                <p>
+                    Bye! 👋🏻
+                </p>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>
+
+<script>
+</script>

@@ -1,55 +1,76 @@
-{% load staticfiles %}
 <html>
-    <head>
-        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
-        <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
-        <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
-        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    </head>
+    {% include "head.html" %}
     <body>
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="/metaphors">Metaphors list</a>
+            <hr />
+            <a href="/strategies">Strategies description</a>
+            <hr />
+            <fieldset class="form-group strategies-set">
+                <legend>Strategies</legend>
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="random" onClick="choose('random')" {% if checked == 'random' %} checked {% endif %}>
+                    Random
+                  </label>
+                </div>
+                <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="is_a-random" onClick="choose('is_a-random')" {% if checked == 'is_a-random' %} checked {% endif %}>
+                    Is a (dumb)
+                  </label>
+                </div>
+                <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios3" value="word2vec_subst" onClick="choose('word2vec_subst')" {% if checked == 'word2vec_subst' %} checked {% endif %}>
+                    Words as vectors
+                </label>
+                </div>
+                <div class="form-check disabled">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios4" value="master" disabled>
+                    Master Metaphor
+                  </label>
+                </div>
+            </fieldset>
+        </div>
+        <span style="font-size:30px;cursor:pointer" onclick="openNav()">
+            <button class="btn btn-primary menu">
+                <i class="fas fa-bars"></i>
+            </button> <span class="menu-text">Menu</span>
+        </span>
         <div class="container">
-            <h1 class="display-3 text-center"><font color="black">Meta</font>phor</h1>
-            <div class="row">
-                {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            </div>
+            <h1 class="display-3 text-center" name="main-title"><font color="black">Meta</font>phor</h1>
             <div class="row">
                 <div class="col-md-12 mt-5">
-                    <form action="metaphorize" method="post">
+                    <form id="metaphorize-form" method="post">
                     {% csrf_token %}
                         <div class="input-group">
                             <input id="sentence-input" type="text" class="form-control" name="sentence" placeholder="Input a sentence and become a cheeky poet! ;)">
-                            <input id="strategy-hidden" type="hidden" name="strategy" value="is_a-random">
+                            <input id="strategy-hidden" type="hidden" name="strategy" value={{checked}}>
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-secondary">Metaphorize!</button>
-                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item disabled" href="#">STRATEGY</a>
-                                    <div role="separator" class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#" value='random' data-toggle="tooltip" data-html="true" data-placement="left" title="Returns a random metaphor.">Random</a>
-                                    <a class="dropdown-item active" href="#" value='is_a-random' data-toggle="tooltip" data-html="true" data-placement="left" title='Detects <strong>nouns</strong> in your sentence using NLP and generates a metaphor following this structure: "<em>your_noun IS A random_adjective + random_noun</em>".'>Is_a-random</a>
-                                    <a class="dropdown-item disabled" href="#" data-toggle="tooltip" data-html="true" data-placement="left" title="Artificial Intelligence approach, not ready yet! ;)">AI</a>
-                                </div>
+                                <button id="metaphorize-btn" class="btn btn-secondary">Metaphorize!</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
+            <div class="row justify-content-center" id="loading">
+                <img src="/static/img/Infinity-1s-200px.gif"/>
+            </div>
             <div class="row">
-                <div class="col-md-12">
-                    {% if lang == "English" %}
+                <div id="message-area" class="col-md-12">
+                    {% if can_do %}
                         <div class="metaphor text-center mt-3">
                             {{ metaphor_text }}
                         </div>
                     {% elif lang and lang != "NA"%}
-                        <div class="error_text text-center mt-5">
-                            Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Do you want to know how the language is detected? <a href="https://github.com/guiem/metaphor/blob/master/documentation/language_detection.md">Enlighten me!</a>
+                        <div class="alert alert-info">
+                            Sorry! Right now I only process English sentences. I sense some <strong>{{lang}}</strong> ;) Do you want to know how the language is detected? <a href="https://github.com/guiem/metaphor/wiki/Language-Detection">Enlighten me!</a>
                         </div>
                     {% elif lang == "NA" %}
-                        <div class="error_text text-center mt-5">
+                        <div class="alert alert-warning">
                             OMG, please give me some nice sentences to metaphorize! This was meaningless... 😅
                         </div>
                     {% endif %}
@@ -66,20 +87,31 @@
 </html>
 
 <script>
-    $('.dropdown-item').tooltip();
 
-    $(".dropdown-item").on("click", function() {
-      $(".dropdown-item").removeClass("active");
-      $(this).addClass("active");
-      text = $(this)[0].text;
-      if (text == 'Random') {
-        document.getElementById('strategy-hidden').value='random';
-      }
-      else if (text == 'Is_a-random') {
-        document.getElementById('strategy-hidden').value='is_a-random';
-      }
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+
+    function choose(choice){
+        document.getElementById('strategy-hidden').value=choice;
+    }
+
+    $(window).ready(function() {
+        $('#loading').hide();
     });
-    
+
+    $('#metaphorize-btn').on('click', function(e){
+        e.preventDefault();//prevent the form submit
+        e.stopPropagation();// stop propagation
+        $('#message-area').hide()
+        $('#loading').show();
+        $('#metaphorize-form').submit();
+    });
+
     if ($(window).width() < 400 ) {
     $("input[id='sentence-input']").attr("placeholder","Your sentence...");
     }

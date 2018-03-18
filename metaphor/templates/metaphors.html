@@ -1,0 +1,96 @@
+<html>
+    {% include "head.html" %}
+    <body>
+        <div class="container">
+            <h1 class="text-center">
+                <div class="pagination float-left"><a href="/"><i class="fas fa-arrow-left gohome"></i></a></div>
+                <font color="black">Meta</font>phors
+            </h1>
+            <div class="alert alert-warning">
+                    <span class="font-weight-bold">Warning</span>: not all contents have been previewed and considering
+                    trolling is part of human nature 👻 you may find NSFW material. I'm but an impartial feedback
+                    collector 🤷‍.
+                </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% if metaphors %}
+                <div class="pagination float-right">
+                    <span class="step-links">
+                        {% if metaphors.has_previous %}
+                            <a href="?page=1">&laquo; first</a>
+                            <a href="?page={{ metaphors.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ metaphors.number }} of {{ metaphors.paginator.num_pages }}.
+                        </span>
+
+                        {% if metaphors.has_next %}
+                            <a href="?page={{ metaphors.next_page_number }}">next</a>
+                            <a href="?page={{ metaphors.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+
+            {% else %}
+                <p>No metaphors are available.</p>
+            {% endif %}
+
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Original</th>
+                            <th scope="col">Metaphor</th>
+                            <th scope="col">Votes</th>
+                            <th scope="col">Strategy</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+
+                    {% for metaphor in metaphors %}
+                        <tbody>
+                            <tr>
+                                <td class="align-middle">{{ metaphor.sentence_text }}</a></td>
+                                <!--<td scope="row"><a href="/metaphors/{{ metaphor.id }}/">{{ metaphor.sentence_text }}</a></td>-->
+                                <td class="align-middle">{{ metaphor.metaphor_text }}</td>
+                                <td class="text-center align-middle">{{ metaphor.total_votes }}</td>
+                                <td class="align-middle">{{ metaphor.strategy }}</td>
+                                <td class="align-middle">
+                                    <button type="submit" class="btn btn-primary up" onclick="mySubmit({{ metaphor.id }},'up');">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </button>
+                                </td>
+                                <td class="align-middle">
+                                    <button type="submit" class="btn btn-primary down" onclick="mySubmit({{ metaphor.id }},'down');">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                      </tbody>
+                    {% endfor %}
+                </table>
+
+            <div class="row">
+                <form id="vote-form" class="vote" action="vote/" method="post">
+                    {% csrf_token %}
+                    <input id="metaphor-id" type="hidden" name="metaphor_id">
+                    <input id="direction" type="hidden" name="direction">
+                    <div class="g-recaptcha" data-sitekey="6LcjLk0UAAAAAIuk3ZX7t2LqeViviSv1etBiNyT-"></div>
+                </form>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>
+
+<script>
+function mySubmit(metaphor_id, direction){
+    document.getElementById('metaphor-id').value = metaphor_id;
+    document.getElementById('direction').value = direction;
+    document.getElementById("vote-form").submit();
+}
+</script>
