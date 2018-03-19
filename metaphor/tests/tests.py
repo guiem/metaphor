@@ -1,9 +1,6 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
-from metaphor.utils import get_random_connectors
-from metaphor.utils import get_language
-from metaphor.utils import get_client_ip
-from metaphor.utils import CONNECTORS
+from metaphor.utils import *
 from metaphor.views import is_a_metaphor, random_metaphor, word2vec_substitution
 from metaphor.ai.embeddings import Embeddings
 from metaphor.settings import BASE_DIR
@@ -127,6 +124,17 @@ class UtilsTest(TestCase):
         request.META = {'HTTP_X_FORWARDED_FOR': '69.69.69.69'}
         ip = get_client_ip(request)
         self.assertEqual(ip, '69.69.69.69')
+
+    def test_most_frequent(self):
+        most_freq = most_frequent(10)
+        expected = ['not', 'when', 'other', 'new', 'time', 'so', 'only', 'then', 'now', 'more']
+        self.assertEquals(sorted(expected), sorted(most_freq))
+        most_freq = most_frequent(7, categories={'NOUN'})
+        expected = ['time', 'man', 'af', 'years', 'way', 'people', 'mr.']
+        self.assertEquals(sorted(expected), sorted(most_freq))
+        most_freq = most_frequent(7, categories={'ADJ'})
+        expected = ['new', 'such', 'more', 'many', 'other', 'own', 'first']
+        self.assertEquals(sorted(expected), sorted(most_freq))
 
 
 class AiTest(TestCase):

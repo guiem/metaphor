@@ -1,6 +1,9 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
+from nltk import FreqDist
+from nltk.corpus import brown
+from nltk.tag.mapping import tagset_mapping
 from collections import defaultdict
 import random
 
@@ -8,8 +11,9 @@ CONNECTORS = ['and','whereas',', on the other hand','yet','likewise','similarly'
         ', for another thing','. In addition,','. Furthermore, ','. In other words, ','meanwhile']
 
 # nltk.help.upenn_tagset() to list all NLTK tags
-NOUN_TAGS = {'NN', 'NNP', 'NNS', 'NNPS'}
-ADJECTIVE_TAGS = {'JJ', 'JJR', 'JJS'}
+# https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+# Universal tagset http://universaldependencies.org/u/pos/
+PTB_UNIVERSAL_MAP = tagset_mapping('en-ptb', 'universal')
 
 
 def get_language(text):
@@ -32,9 +36,21 @@ def get_language(text):
 def get_PoS(text, PoS):
     words = []
     for word, pos in pos_tag(word_tokenize(text)):
-        if pos in PoS:
+        universal_pos = PTB_UNIVERSAL_MAP[pos]
+        if universal_pos in PoS:
             words.append((word, pos))
     return words
+
+
+def most_frequent(n, categories={'ADJ', 'NOUN', 'ADV'}):
+    frequency_list = FreqDist((w.lower(), tag) for w, tag in brown.tagged_words(tagset='universal'))
+    most_freq = set()
+    for (w, tag), count in frequency_list.most_common():
+        if len(most_freq) == n:
+            break
+        if tag in categories and w not in most_freq:
+            most_freq.add(w)
+    return list(most_freq)
 
 
 def get_random_connectors(num): 

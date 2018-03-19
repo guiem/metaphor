@@ -31,7 +31,7 @@ def random_metaphor():
 
 
 def is_a_metaphor(sentence_text):
-    nouns_tagged = get_PoS(sentence_text, PoS = NOUN_TAGS)
+    nouns_tagged = get_PoS(sentence_text, PoS = {'NOUN'})
     nouns_list = [n for n, tag in nouns_tagged]
     metaphors = []
     if not nouns_list:
@@ -51,7 +51,7 @@ def word2vec_substitution(sentence_text, level=1, num_neighbors=5, emb_info={}):
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50}}
     e = Embeddings('Embeddings', emb = emb_info)
-    words_tagged = get_PoS(sentence_text, PoS = NOUN_TAGS.union(ADJECTIVE_TAGS))
+    words_tagged = get_PoS(sentence_text, PoS = {'NOUN', 'ADJ', 'ADV'})
     words = [w for w, tag in words_tagged]
     closest_n = e.closest_n(words, num_neighbors)
     for w, closest in closest_n.items():
