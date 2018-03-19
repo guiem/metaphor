@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 import numpy as np
 import random
 import pickle
+import re
 import os
 
 
@@ -45,17 +46,17 @@ def is_a_metaphor(sentence_text):
     return ' '.join([j for i in zip(metaphors, connectors) for j in i][:-1])+"."
 
 
-def word2vec_substitution(sentence_text, level=1, num_neighbours=5, emb_info={}):
+def word2vec_substitution(sentence_text, level=1, num_neighbors=5, emb_info={}):
     if not emb_info:
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50}}
     e = Embeddings('Embeddings', emb = emb_info)
     words_tagged = get_PoS(sentence_text, PoS = NOUN_TAGS.union(ADJECTIVE_TAGS))
-    for w, tag in words_tagged:
-        if e.word_exists(w):
-            closest_n = e.closest_n(w, num_neighbours)
-            substitute = closest_n[np.random.randint(0, len(closest_n))]
-            sentence_text = sentence_text.replace(w, substitute[0])
+    words = [w for w, tag in words_tagged]
+    closest_n = e.closest_n(words, num_neighbors)
+    for w, closest in closest_n.items():
+        substitute = closest[np.random.randint(0, len(closest))]
+        sentence_text = re.sub(r"\b{}\b".format(w), substitute[0], sentence_text)
     return sentence_text
 
 # TODO: make vec_metaphor based on pairs adj-word (context), similar to analogy

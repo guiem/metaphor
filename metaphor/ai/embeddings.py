@@ -33,10 +33,14 @@ class Embeddings(metaclass=Singleton):
             e_id = self.default_e
         return w in self.embeddings[e_id].index
 
-    def closest_n(self, word, n, e_id=None):
+    def closest_n(self, words, n, e_id=None):
+        closest = {}
         E = self.get_E(e_id)
-        w = E.loc[word]
-        sims = cosine_similarity(E, w)
-        sims.loc[word] = 0  # little trick to avoid retrieving the word
-        closest_n = sims.nlargest(n)
-        return list(zip(closest_n.index.values, closest_n.values))
+        for word in words:
+            if word not in closest and self.word_exists(word):
+                word_vec = E.loc[word]
+                sims = cosine_similarity(E, word_vec)
+                sims.loc[word] = 0  # little trick to avoid retrieving the word
+                closest_n = sims.nlargest(n)
+            closest[word] = list(zip(closest_n.index.values, closest_n.values))
+        return closest

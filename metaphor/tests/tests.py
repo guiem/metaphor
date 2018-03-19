@@ -47,7 +47,7 @@ class ViewsTest(TestCase):
     def test_word2vec_substitution(self):
         sentence = "I am a beautiful human being"
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
-        metaphor = word2vec_substitution(sentence, num_neighbours=1, emb_info={'glove.6B.50d': {'path': emb_path, 'dim':
+        metaphor = word2vec_substitution(sentence, num_neighbors=1, emb_info={'glove.6B.50d': {'path': emb_path, 'dim':
                                                                                                 50}})
         self.assertEqual(metaphor, "I am a lovely animal being")
 
@@ -147,8 +147,8 @@ class AiTest(TestCase):
     def test_closest_n(self):
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim':50}})
-        closest_n = e.closest_n('sun', 5)
-        self.assertEqual(closest_n[0][0], 'sky')
-        self.assertAlmostEqual(closest_n[0][1], 0.6626, 3)
-        self.assertEqual(closest_n[2][0], 'bright')
-        self.assertAlmostEqual(closest_n[2][1], 0.6353, 3)
+        closest_n = e.closest_n(['sun'], 5)
+        self.assertEqual(closest_n['sun'][0][0], 'sky')
+        self.assertAlmostEqual(closest_n['sun'][0][1], 0.6626, 3)
+        self.assertEqual(closest_n['sun'][2][0], 'bright')
+        self.assertAlmostEqual(closest_n['sun'][2][1], 0.6353, 3)
