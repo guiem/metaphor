@@ -140,6 +140,9 @@ class UtilsTest(TestCase):
 
 class AiTest(TestCase):
 
+    def tearDown(self):
+        pass
+
     def test_embeddings_singleton(self):
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         e1 = Embeddings('Embeddings', emb = {'glove.6B.50d': {'path': file_path, 'dim':50}})
@@ -165,6 +168,8 @@ class AiTest(TestCase):
     def test_closest_n_modes(self):
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim':50, 'similarities_dim': 2000}})
+        if not e.similarities.get('glove.6B.50d'):
+            e.add_embeddings(emb={'glove.6B.50d': {'similarities_dim': 2000}})
         words = ['sun', 'beautiful', 'ugly', 'mother']
         ping = time.time()
         closest_n = e.closest_n(words, 5)

@@ -28,8 +28,7 @@ class Embeddings(metaclass=Singleton):
             if info.get('similarities_dim'):
                 dim_S = info.get('similarities_dim')
                 words = most_frequent(dim_S, categories={'ADJ', 'NOUN', 'ADV'})
-                E = self.embeddings[e_id].loc[words]
-                E.dropna(axis=0, how='any', inplace=True)
+                E = self.embeddings[e_id].loc[self.embeddings[e_id].index.intersection(words)]
                 existing_words = E.index.values
                 sims = cosine_similarity_sk(E, E)
                 sims_df = pd.DataFrame(sims, index=existing_words, columns=existing_words, dtype=np.float16)
