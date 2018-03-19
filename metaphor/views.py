@@ -46,14 +46,14 @@ def is_a_metaphor(sentence_text):
     return ' '.join([j for i in zip(metaphors, connectors) for j in i][:-1])+"."
 
 
-def word2vec_substitution(sentence_text, level=1, num_neighbors=5, emb_info={}):
+def word2vec_substitution(sentence_text, level=1, num_neighbors=5, fast_desired=False, emb_info={}):
     if not emb_info:
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
-        emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50}}
+        emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50, 'similarities_dim': 2000}}
     e = Embeddings('Embeddings', emb = emb_info)
     words_tagged = get_PoS(sentence_text, PoS = {'NOUN', 'ADJ', 'ADV'})
     words = [w for w, tag in words_tagged]
-    closest_n = e.closest_n(words, num_neighbors)
+    closest_n = e.closest_n(words, num_neighbors, fast_desired=fast_desired)
     for w, closest in closest_n.items():
         substitute = closest[np.random.randint(0, len(closest))]
         sentence_text = re.sub(r"\b{}\b".format(w), substitute[0], sentence_text)
@@ -69,6 +69,8 @@ def create_metaphor(sentence_text, strategy="is_a-random"):
         return is_a_metaphor(sentence_text)
     elif strategy == "word2vec_subst":
         return word2vec_substitution(sentence_text)
+    elif strategy == "word2vec_subst_fast":
+        return word2vec_substitution(sentence_text, fast_desired=True)
     else:
         pass
     return ""

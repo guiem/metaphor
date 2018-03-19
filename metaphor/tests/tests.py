@@ -7,6 +7,7 @@ from metaphor.settings import BASE_DIR
 from metaphor.models import Dictionary
 import pickle
 import os
+import time
 
 
 def create_database():
@@ -160,3 +161,14 @@ class AiTest(TestCase):
         self.assertAlmostEqual(closest_n['sun'][0][1], 0.6626, 3)
         self.assertEqual(closest_n['sun'][2][0], 'bright')
         self.assertAlmostEqual(closest_n['sun'][2][1], 0.6353, 3)
+
+    def test_closest_n_modes(self):
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim':50, 'similarities_dim': 2000}})
+        words = ['sun', 'beautiful', 'ugly', 'mother']
+        ping = time.time()
+        closest_n = e.closest_n(words, 5)
+        pong = time.time()
+        closest_n = e.closest_n(words, 5, fast_desired=True)
+        pongo = time.time()
+        self.assertLess(pongo - pong, pong - ping)
