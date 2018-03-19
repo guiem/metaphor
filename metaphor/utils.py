@@ -14,6 +14,16 @@ CONNECTORS = ['and','whereas',', on the other hand','yet','likewise','similarly'
 # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
 # Universal tagset http://universaldependencies.org/u/pos/
 PTB_UNIVERSAL_MAP = tagset_mapping('en-ptb', 'universal')
+ENGLISH_PRONOUNS = {
+    'i',    'me',   'my',   'mine', 'myself',
+    'you',  'you',  'your', 'yours', 'yourself',
+    'he',	'him',	'his',	'himself',
+    'she',	'her',	'hers',	'herself',
+    'it',	'its',	'itself',
+    'we',	'us',	'our',  'ours', 'ourselves',
+    'you',  'your', 'yours','yourselves',
+    'they',	'them',	'their', 'theirs', 'themselves'
+}
 
 
 def get_language(text):
@@ -33,12 +43,13 @@ def get_language(text):
     return "NA"
 
 
-def get_PoS(text, PoS):
+def get_PoS(text, PoS, filter_pronouns=True):
     words = []
     for word, pos in pos_tag(word_tokenize(text)):
-        universal_pos = PTB_UNIVERSAL_MAP[pos]
-        if universal_pos in PoS:
-            words.append((word, pos))
+        if not filter_pronouns or (filter_pronouns and word not in ENGLISH_PRONOUNS):
+            universal_pos = PTB_UNIVERSAL_MAP[pos]
+            if universal_pos in PoS:
+                words.append((word, pos))
     return words
 
 
