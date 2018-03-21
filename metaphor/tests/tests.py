@@ -1,10 +1,12 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.utils import timezone
 from metaphor.utils import *
-from metaphor.views import is_a_metaphor, random_metaphor, word2vec_substitution
+from metaphor.decorators import *
+from metaphor.views import *
 from metaphor.ai.embeddings import Embeddings
-from metaphor.settings import BASE_DIR
-from metaphor.models import Dictionary
+from metaphor.settings import BASE_DIR, GOOGLE_RECAPTCHA_SECRET_KEY
+from metaphor.models import Dictionary, Metaphor
 import pickle
 import os
 import time
@@ -13,6 +15,7 @@ import time
 def create_database():
     Dictionary.objects.create(word="unprecedented", word_type="a.")
     Dictionary.objects.create(word="cat", word_type="n.")
+    Metaphor.objects.create(upvotes=69, req_date=timezone.now())
 
 
 class ModelsTest(TestCase):
@@ -30,6 +33,7 @@ class ViewsTest(TestCase):
     
     def setUp(self):
         create_database()
+        self.factory = RequestFactory()
     
     def test_is_a_metaphor(self):
         sentence = "Guiem is nice."
@@ -48,6 +52,22 @@ class ViewsTest(TestCase):
         metaphor = word2vec_substitution(sentence, num_neighbors=1, emb_info={'glove.6B.50d': {'path': emb_path, 'dim':
                                                                                                 50}})
         self.assertEqual(metaphor, "I am a lovely animal being")
+
+    def test_vote(self):
+        class Messages(): # messages stub to pass tests
+            def add(self, level, message, extra_tags):
+                pass
+
+        data = {
+            'g-recaptcha-response': None,
+            'metaphor_id': 1,
+            'direction': 'up',
+        }
+        request = self.factory.post('/vote', data=data)
+        request._messages = Messages()
+        vote(request)
+        metaphor = get_object_or_404(Metaphor, pk=1)
+        self.assertEquals(69, metaphor.upvotes)
 
 
 class UtilsTest(TestCase):
