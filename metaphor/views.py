@@ -108,7 +108,7 @@ def list_metaphors(request):
     return render(request, 'metaphors.html', {'metaphors': metaphors})
 
 @check_recaptcha
-def vote(request):
+def vote(request, debug=False):
     if request.recaptcha_is_valid:
         metaphor_id = request.POST.get('metaphor_id')
         direction = request.POST.get('direction')

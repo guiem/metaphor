@@ -1,11 +1,12 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.http.response import Http404
 from django.utils import timezone
 from metaphor.utils import *
 from metaphor.decorators import *
 from metaphor.views import *
 from metaphor.ai.embeddings import Embeddings
-from metaphor.settings import BASE_DIR, GOOGLE_RECAPTCHA_SECRET_KEY
+from metaphor.settings import BASE_DIR, GOOGLE_RECAPTCHA_SECRET_KEY, GOOGLE_RECAPTCHA_RESPONSE_TEST
 from metaphor.models import Dictionary, Metaphor
 import pickle
 import os
@@ -59,15 +60,39 @@ class ViewsTest(TestCase):
                 pass
 
         data = {
-            'g-recaptcha-response': None,
+            'g-recaptcha-response': GOOGLE_RECAPTCHA_RESPONSE_TEST,
             'metaphor_id': 1,
             'direction': 'up',
         }
         request = self.factory.post('/vote', data=data)
         request._messages = Messages()
-        vote(request)
+        vote(request, debug=True)
         metaphor = get_object_or_404(Metaphor, pk=1)
-        self.assertEquals(69, metaphor.upvotes)
+        self.assertEquals(70, metaphor.upvotes)
+        self.assertEquals(70, metaphor.total_votes)
+        data.update({'direction': 'down'})
+        request = self.factory.post('/vote', data=data)
+        request._messages = Messages()
+        vote(request, debug=True)
+        metaphor = get_object_or_404(Metaphor, pk=1)
+        self.assertEquals(1, metaphor.downvotes)
+        self.assertEquals(70, metaphor.upvotes)
+        self.assertEquals(69, metaphor.total_votes)
+        vote(request, debug=False)
+        metaphor = get_object_or_404(Metaphor, pk=1)
+        self.assertEquals(1, metaphor.downvotes)
+
+    def test_metaphorize(self):
+        data = {}
+        request = self.factory.post('/metaphorize', data=data)
+        metaphorize(request)
+        with self.assertRaises(Http404):
+            get_object_or_404(Metaphor, pk=2)
+        data = {'sentence': 'I would love to get a nice metaphor', 'strategy': 'random'}
+        request = self.factory.post('/metaphorize', data=data)
+        metaphorize(request)
+        metaphor = get_object_or_404(Metaphor, pk=2)
+        self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
 
 
 class UtilsTest(TestCase):
