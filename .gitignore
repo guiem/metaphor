@@ -102,3 +102,4 @@ metaphor_ENV/
 
 # Metaphor data
 metaphor/data/glove.6B
+metaphor/data/glove.6B.50d_sim.index

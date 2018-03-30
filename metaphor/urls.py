@@ -13,10 +13,3 @@ urlpatterns = [
     path('strategies/', views.strategies, name='strategies'),
     path('metaphors/vote/', views.vote, name='vote'),
 ]
-
-# Operations that will be executed at the beginning to avoid timeouts
-
-# 1. Loading embeddings at start
-emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
-emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50, 'sim_index': True}}
-e = Embeddings('Embeddings', emb=emb_info)

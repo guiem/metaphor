@@ -1,12 +1,15 @@
 import pandas as pd
 import numpy as np
 import csv
+import os
+import pickle
 from builtins import str
 from gputils import cosine_similarity
 from sklearn.metrics.pairwise import cosine_similarity as cosine_similarity_sk
 import nmslib
 from metaphor.singleton import Singleton
 from metaphor.utils import *
+from metaphor.settings import BASE_DIR
 
 
 class Embeddings(metaclass=Singleton):
@@ -37,10 +40,16 @@ class Embeddings(metaclass=Singleton):
                 sims_df = pd.DataFrame(sims, index=existing_words, columns=existing_words, dtype=np.float16)
                 self.similarities[e_id] = sims_df
             if info.get('sim_index'):
-                E = self.embeddings[e_id]
-                index = nmslib.init(method='hnsw', space='cosinesimil')
-                index.addDataPointBatch(E)
-                index.createIndex({'post': 2}, print_progress=False)
+                sim_index_path = os.path.join(BASE_DIR, 'data/{}_sim.index'.format(e_id))
+                if os.path.isfile(sim_index_path):
+                    index = nmslib.init(method='hnsw', space='cosinesimil')
+                    index.loadIndex(sim_index_path)
+                else:
+                    E = self.embeddings[e_id]
+                    index = nmslib.init(method='hnsw', space='cosinesimil')
+                    index.addDataPointBatch(E)
+                    index.createIndex({'post': 2}, print_progress=False)
+                    index.saveIndex(sim_index_path)
                 self.sim_index[e_id] = index
 
     def get_E(self, e_id=None):
