@@ -43,13 +43,12 @@ def get_language(text):
     return "NA"
 
 
-def get_PoS(text, PoS, filter_pronouns=True):
+def get_PoS(text, PoS):
     words = []
     for word, pos in pos_tag(word_tokenize(text)):
-        if not filter_pronouns or (filter_pronouns and word not in ENGLISH_PRONOUNS):
-            universal_pos = PTB_UNIVERSAL_MAP[pos]
-            if universal_pos in PoS:
-                words.append((word, pos))
+        universal_pos = PTB_UNIVERSAL_MAP[pos]
+        if universal_pos in PoS:
+            words.append((word, pos))
     return words
 
 

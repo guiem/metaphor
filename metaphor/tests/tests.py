@@ -8,6 +8,7 @@ from metaphor.views import *
 from metaphor.ai.embeddings import Embeddings
 from metaphor.settings import BASE_DIR, GOOGLE_RECAPTCHA_SECRET_KEY, GOOGLE_RECAPTCHA_RESPONSE_TEST
 from metaphor.models import Dictionary, Metaphor
+import nmslib
 import pickle
 import os
 import time
@@ -93,6 +94,12 @@ class ViewsTest(TestCase):
         metaphorize(request)
         metaphor = get_object_or_404(Metaphor, pk=2)
         self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
+
+    def test_combine_words(self):
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim': 50}})
+        words = ['house', 'bright', 'sun']
+        res = combine_words(words, e.get_E(), x=2)
 
 
 class UtilsTest(TestCase):
@@ -182,6 +189,11 @@ class UtilsTest(TestCase):
         expected = ['new', 'such', 'more', 'many', 'other', 'own', 'first']
         self.assertEquals(sorted(expected), sorted(most_freq))
 
+    def test_get_PoS(self):
+        sentence_text = "This is where I'm standing, and I don't like it"
+        words_tagged = get_PoS(sentence_text, PoS={'NOUN', 'ADJ', 'ADV'})
+        self.assertEquals([('where', 'WRB'), ("n't", 'RB')], words_tagged)
+
 
 class AiTest(TestCase):
 
@@ -204,7 +216,18 @@ class AiTest(TestCase):
     def test_closest_n(self):
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim':50}})
-        closest_n = e.closest_n(['sun'], 5)
+        words = e.get_vectors(['sun'])
+        closest_n = e.closest_n(words, 5)
+        self.assertEqual(closest_n['sun'][0][0], 'sky')
+        self.assertAlmostEqual(closest_n['sun'][0][1], 0.6626, 3)
+        self.assertEqual(closest_n['sun'][2][0], 'bright')
+        self.assertAlmostEqual(closest_n['sun'][2][1], 0.6353, 3)
+
+    def test_closest_n_approximate_knn(self):
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'sim_index': True}})
+        words = e.get_vectors(['sun'])
+        closest_n = e.closest_n(words, 5)
         self.assertEqual(closest_n['sun'][0][0], 'sky')
         self.assertAlmostEqual(closest_n['sun'][0][1], 0.6626, 3)
         self.assertEqual(closest_n['sun'][2][0], 'bright')
@@ -215,10 +238,61 @@ class AiTest(TestCase):
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim':50, 'similarities_dim': 2000}})
         if not e.similarities.get('glove.6B.50d'):
             e.add_embeddings(emb={'glove.6B.50d': {'similarities_dim': 2000}})
-        words = ['sun', 'beautiful', 'ugly', 'mother']
+        words = e.get_vectors(['sun', 'beautiful', 'ugly', 'mother'])
         ping = time.time()
         closest_n = e.closest_n(words, 5)
         pong = time.time()
         closest_n = e.closest_n(words, 5, fast_desired=True)
         pongo = time.time()
         self.assertLess(pongo - pong, pong - ping)
+
+
+class StrategiesTest(TestCase):
+
+    def word_combination(self):
+        """
+        Do the neighbours change according to a word context?
+        Result: Not enough
+        """
+        d = 300
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.format(d))
+        e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim': d}})
+        words_neg = ["man", "bad", "dirty"]
+        words_pos = ["man", "good", "clean"]
+
+        for x in range(2, 11):
+            w1 = combine_words(words_neg, e.get_E(), x=x)
+            w2 = combine_words(words_pos, e.get_E(), x=x)
+            res1 = e.closest_n(w1, 5)
+            res2 = e.closest_n(w2, 5)
+            print("x = {}. ".format(x), res1)
+            print("x = {}. ".format(x), res2)
+            print('----------------------------')
+
+    def test_analogy_style(self):
+        pass
+
+    def test_neighbours_strategy(self):
+        d = 50
+        file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.format(d))
+        e = Embeddings('Embeddings', {'glove.6B.{}d'.format(d): {'path': file_path, 'dim': d, 'sim_index': True}})
+        if not e.sim_index.get('glove.6B.50d'):
+            e.add_embeddings(emb={'glove.6B.50d': {'sim_index': True}})
+        E = e.get_E()
+        words = ["war", "child", "mom", "ball", "astral", "eleven", "me", "tennis", "playful", "red"]
+        words_vec = e.get_vectors(words)
+        ping = time.time()
+        res1 = e.closest_n(words_vec, 10, fast_desired=True)
+        pong = time.time()
+        res2 = e.closest_n(words_vec, 10, fast_desired=False)
+        peng = time.time()
+        self.assertLess(pong - ping, peng - pong)
+        self.assertEquals(res1.keys(), res2.keys())
+        for k, values in res1.items():
+            in_count = 0
+            words1, _ = zip(*values)
+            words2, _ = zip(*res2[k])
+            for w in words1:
+                if w in words2:
+                    in_count += 1
+            self.assertGreaterEqual(in_count / len(words1), 0.9) # we request 90% similarity

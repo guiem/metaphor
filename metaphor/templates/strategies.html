@@ -93,14 +93,12 @@
                 <p class="text-justify">
                     You'll probably have noticed that under "Words as vectors" strategy there is a faster option. Well,
                     when sentences are long it can take quite a while to process them (given the lousy server I'm using)
-                    . If you choose the faster option the distances are <span class="font-weight-bold">precomputed
-                    </span> so it should take less time.
                 </p>
                 <p class="text-justify">
-                    It comes out of a cost though: only the most common words in the current language are chosen. This
-                    is because storing the matrix with all distances is unfeasible (400,000 x 400,000, for example).
-                    The system will be lexically limited since it will be able to find similar words only in a smaller
-                    vocabulary.
+                    This is where <a href="https://arxiv.org/abs/1603.09320">approximate nearest neighbors</a> shines:
+                    returning approximate results but blazingly quickly. Many times you don't need exact optimal results,
+                    given we are trying to build metaphors space for ambiguity is more than welcome. Plus, no differences
+                    in the retreived words were observed compared to the original exact neighbors method.
                 </p>
             </div>
             <h2>M<font color="black">aster metaphor</font></h2>

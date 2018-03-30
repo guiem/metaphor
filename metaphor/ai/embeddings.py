@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
 import csv
+from builtins import str
 from gputils import cosine_similarity
 from sklearn.metrics.pairwise import cosine_similarity as cosine_similarity_sk
+import nmslib
 from metaphor.singleton import Singleton
 from metaphor.utils import *
 
@@ -14,6 +16,7 @@ class Embeddings(metaclass=Singleton):
         self.embeddings = {}
         self.default_e = None
         self.similarities = {}
+        self.sim_index = {}
         if emb:
             self.add_embeddings(emb)
 
@@ -33,34 +36,52 @@ class Embeddings(metaclass=Singleton):
                 sims = cosine_similarity_sk(E, E)
                 sims_df = pd.DataFrame(sims, index=existing_words, columns=existing_words, dtype=np.float16)
                 self.similarities[e_id] = sims_df
+            if info.get('sim_index'):
+                E = self.embeddings[e_id]
+                index = nmslib.init(method='hnsw', space='cosinesimil')
+                index.addDataPointBatch(E)
+                index.createIndex({'post': 2}, print_progress=False)
+                self.sim_index[e_id] = index
 
     def get_E(self, e_id=None):
-        if not e_id:
-            e_id = self.default_e
+        e_id = e_id or self.default_e
         return self.embeddings[e_id]
 
     def word_exists(self, w, e_id=None):
-        if not e_id:
-            e_id = self.default_e
+        e_id = e_id or self.default_e
         return w in self.embeddings[e_id].index
 
+    def get_vectors(self, words, e_id=None):
+        e_id = e_id or self.default_e
+        return [(w, self.embeddings[e_id].loc[w]) for w in words if self.word_exists(w)]
+
     def closest_n(self, words, n, e_id=None, fast_desired=False):
+        # words: list of tuples (word, word_vec)
+        # fast desired: if True it tries to execute the fastest strategy applicable
         closest = {}
-        if not e_id:
-            e_id = self.default_e
-        fast = fast_desired and e_id in self.similarities
+        e_id = e_id or self.default_e
         E = self.get_E(e_id)
-        for word in words:
+        for word, word_vec in words:
             if word not in closest and self.word_exists(word):
-                if fast and word in self.similarities[e_id].index:
+                if fast_desired and e_id in self.sim_index:
+                    # Hierarchical Navigable Small World graphs
+                    ids, distances = self.sim_index[e_id].knnQuery(word_vec, k=n+1) # +1 because it retrieves itself
+                    index_values = E.iloc[ids[1:]].index.values # strong assumption that first element is the word itself
+                    similarities = 1 - distances[1:]
+                elif (fast_desired and e_id in self.similarities) and (word in self.similarities[e_id].index):
+                    # Subset of most frequent word matrix of computed distances
                     sims = self.similarities[e_id].loc[word]
                     sims[word] = 0 # little trick to avoid retrieving the word
                     transp_sims = sims.transpose()
                     closest_n = transp_sims.nlargest(n)
+                    index_values = closest_n.index.values
+                    similarities = closest_n.values
                 else:
-                    word_vec = E.loc[word]
+                    # Compute cosine_similarity online for every word
                     sims = cosine_similarity(E, word_vec)
                     sims.loc[word] = 0  # little trick to avoid retrieving the word
                     closest_n = sims.nlargest(n)
-            closest[word] = list(zip(closest_n.index.values, closest_n.values))
+                    index_values = closest_n.index.values
+                    similarities = closest_n.values
+                closest[word] = list(zip(index_values, similarities))
         return closest

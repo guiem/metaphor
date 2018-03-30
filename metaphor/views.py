@@ -23,12 +23,10 @@ def index(request):
 def strategies(request):
     return render(request, 'strategies.html')
 
-
 def random_metaphor():
     file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
     life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
     return life_metaphors[random.randint(1, len(life_metaphors)-1)]
-
 
 def is_a_metaphor(sentence_text):
     nouns_tagged = get_PoS(sentence_text, PoS = {'NOUN'})
@@ -45,22 +43,30 @@ def is_a_metaphor(sentence_text):
     connectors = get_random_connectors(len(metaphors))
     return ' '.join([j for i in zip(metaphors, connectors) for j in i][:-1])+"."
 
+def combine_words(words, embeddings, x=2):
+    word_vectors = embeddings.loc[embeddings.index.intersection(words)]
+    combined = []
+    for word in words:
+        combi = (word_vectors.sum(axis=0) + word_vectors.loc[word]*(x-1)) / (len(words) + (x - 1))
+        combined.append((word, combi))
+    return combined
 
-def word2vec_substitution(sentence_text, level=1, num_neighbors=5, fast_desired=False, emb_info={}):
+def word2vec_substitution(sentence_text, num_neighbors=5, fast_desired=False, combo=False ,emb_info={}):
     if not emb_info:
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
-        emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50, 'similarities_dim': 2000}}
+        emb_info = {'glove.6B.50d': {'path': emb_path, 'dim':50, 'sim_index': True}}
     e = Embeddings('Embeddings', emb = emb_info)
     words_tagged = get_PoS(sentence_text, PoS = {'NOUN', 'ADJ', 'ADV'})
     words = [w for w, tag in words_tagged]
+    if combo:
+        words = combine_words(words, e.get_E(), strategy=combo)
+    else:
+        words = e.get_vectors(words)
     closest_n = e.closest_n(words, num_neighbors, fast_desired=fast_desired)
     for w, closest in closest_n.items():
         substitute = closest[np.random.randint(0, len(closest))]
         sentence_text = re.sub(r"\b{}\b".format(w), substitute[0], sentence_text)
     return sentence_text
-
-# TODO: make vec_metaphor based on pairs adj-word (context), similar to analogy
-
 
 def create_metaphor(sentence_text, strategy="is_a-random"):
     if strategy == "random":
@@ -71,10 +77,11 @@ def create_metaphor(sentence_text, strategy="is_a-random"):
         return word2vec_substitution(sentence_text)
     elif strategy == "word2vec_subst_fast":
         return word2vec_substitution(sentence_text, fast_desired=True)
+    # elif strategy == "word2vec_subst_combo":
+    #    return word2vec_substitution(sentence_text, fast_desired=True, combo=2)
     else:
         pass
     return ""
-
 
 def metaphorize(request):
     if not request.POST.get('sentence'):
@@ -106,6 +113,7 @@ def list_metaphors(request):
     page = request.GET.get('page')
     metaphors = paginator.get_page(page)
     return render(request, 'metaphors.html', {'metaphors': metaphors})
+
 
 @check_recaptcha
 def vote(request, debug=False):
