@@ -14,16 +14,6 @@ CONNECTORS = ['and','whereas',', on the other hand','yet','likewise','similarly'
 # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
 # Universal tagset http://universaldependencies.org/u/pos/
 PTB_UNIVERSAL_MAP = tagset_mapping('en-ptb', 'universal')
-ENGLISH_PRONOUNS = {
-    'i',    'me',   'my',   'mine', 'myself',
-    'you',  'you',  'your', 'yours', 'yourself',
-    'he',	'him',	'his',	'himself',
-    'she',	'her',	'hers',	'herself',
-    'it',	'its',	'itself',
-    'we',	'us',	'our',  'ours', 'ourselves',
-    'you',  'your', 'yours','yourselves',
-    'they',	'them',	'their', 'theirs', 'themselves'
-}
 
 
 def get_language(text):
@@ -75,3 +65,15 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def resolve_can_do(sentence_text, lang):
+    info_id = None
+    can_do = lang and 'English' in lang and not sentence_text.startswith('i ')
+    if not can_do and lang != "NA" and not sentence_text.startswith('i '):
+        info_id = 1
+    elif not can_do and lang == "NA":
+        info_id = 2
+    elif not can_do and sentence_text.startswith('i '):
+        info_id = 3
+    return can_do, info_id

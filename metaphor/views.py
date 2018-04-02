@@ -80,9 +80,9 @@ def metaphorize(request):
     strategy = request.POST['strategy']
     lang = get_language(sentence_text)
     metaphor_text = None
-    can_do = lang and 'English' in lang
+    can_do, info_id = resolve_can_do(sentence_text, lang)
     if can_do:
-        metaphor_text = create_metaphor(sentence_text.lower(), strategy=strategy)
+        metaphor_text = create_metaphor(sentence_text, strategy=strategy)
         metaphor = Metaphor(sentence_text=sentence_text, metaphor_text=metaphor_text, req_date=timezone.now(),
                             remote_addr=remote_addr, strategy=strategy)
         metaphor.save()
@@ -92,5 +92,6 @@ def metaphorize(request):
         'can_do': can_do,
         'lang': lang,
         'checked': strategy,
+        'info_id': info_id,
     }
     return render(request, 'homepage.html', context)

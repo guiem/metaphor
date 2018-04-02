@@ -86,6 +86,12 @@ class W2VSubsTest(TestCase):
         m.metaphorize(sentence, num_neighbors=1, fast_desired=1)
         self.assertEqual(metaphor, "I am a lovely animal being")
 
+    def test_w2v_I(self):
+        sentence = "i ate too much"
+        m = W2VSubs()
+        metaphor = m.metaphorize(sentence)
+        print(metaphor)
+
 
 class ViewsTest(TestCase):
     
@@ -247,6 +253,14 @@ class UtilsTest(TestCase):
         sentence_text = "This is where I'm standing, and I don't like it"
         words_tagged = get_PoS(sentence_text, PoS={'NOUN', 'ADJ', 'ADV'})
         self.assertEquals([('where', 'WRB'), ("n't", 'RB')], words_tagged)
+
+    def test_PoS_I(self):
+        sentence = "I ate too much"
+        words_tagged = get_PoS(sentence, PoS={'NOUN', 'ADJ', 'ADV'})
+        self.assertEqual(words_tagged, [('too', 'RB'), ('much', 'JJ')])
+        sentence = "i ate too much"
+        words_tagged = get_PoS(sentence, PoS={'NOUN', 'ADJ', 'ADV'})
+        self.assertEqual(words_tagged, [('i', 'JJ'), ('too', 'RB'), ('much', 'JJ')])
 
 
 class AiTest(TestCase):
