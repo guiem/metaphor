@@ -1,17 +1,14 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.http.response import Http404
-from django.utils import timezone
-from metaphor.utils import *
-from metaphor.decorators import *
 from metaphor.views import *
 from metaphor.random_metaphor import RandomMetaphor
 from metaphor.is_a_metaphor import IsAMetaphor
 from metaphor.w2v_subs import W2VSubs
+from metaphor.metaphor import Metaphor as MetaphorClass
 from metaphor.ai.embeddings import Embeddings
 from metaphor.settings import BASE_DIR, GOOGLE_RECAPTCHA_SECRET_KEY, GOOGLE_RECAPTCHA_RESPONSE_TEST
 from metaphor.models import Dictionary, Metaphor
-import nmslib
 import pickle
 import os
 import time
@@ -33,6 +30,14 @@ class ModelsTest(TestCase):
         a = Dictionary.objects.random(word_type='n.').word.lower()
         self.assertEqual(a, "cat")
 
+
+class MetaphorTest(TestCase):
+
+    def test_no_exception(self):
+        m = MetaphorClass()
+        m.create()
+        m.reconstruct()
+        m.metaphorize()
 
 class RandomMetaphorTest(TestCase):
 
@@ -56,6 +61,14 @@ class IsAMetaphorTest(TestCase):
         is_a = m.metaphorize(sentence)
         self.assertEqual(is_a, "Guiem is an unprecedented cat.")
 
+    def test_is_a_metaphor_no_nouns(self):
+        sentence = "this of the that for the those"
+        m = IsAMetaphor()
+        is_a = m.metaphorize(sentence)
+        file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
+        life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
+        self.assertIn(is_a, life_metaphors)
+
 
 class W2VSubsTest(TestCase):
 
@@ -68,6 +81,9 @@ class W2VSubsTest(TestCase):
         self.assertEqual(metaphor, "I am a lovely animal being")
         m.e.add_embeddings({'glove.6B.50d': {'sim_index': True}})
         metaphor = m.metaphorize(sentence, num_neighbors=1, fast_desired=True)
+        self.assertEqual(metaphor, "I am a lovely animal being")
+        m = W2VSubs()
+        m.metaphorize(sentence, num_neighbors=1, fast_desired=1)
         self.assertEqual(metaphor, "I am a lovely animal being")
 
 
@@ -115,6 +131,21 @@ class ViewsTest(TestCase):
         request = self.factory.post('/metaphorize', data=data)
         metaphorize(request)
         metaphor = get_object_or_404(Metaphor, pk=2)
+        self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
+        data = {'sentence': 'I would love to get a nice metaphor', 'strategy': 'is_a-random'}
+        request = self.factory.post('/metaphorize', data=data)
+        metaphorize(request)
+        metaphor = get_object_or_404(Metaphor, pk=3)
+        self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
+        data = {'sentence': 'I would love to get a nice metaphor', 'strategy': 'word2vec_subst'}
+        request = self.factory.post('/metaphorize', data=data)
+        metaphorize(request)
+        metaphor = get_object_or_404(Metaphor, pk=4)
+        self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
+        data = {'sentence': 'I would love to get a nice metaphor', 'strategy': 'word2vec_subst_fast'}
+        request = self.factory.post('/metaphorize', data=data)
+        metaphorize(request)
+        metaphor = get_object_or_404(Metaphor, pk=5)
         self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
 
     """
@@ -272,25 +303,23 @@ class AiTest(TestCase):
 
 class StrategiesTest(TestCase):
 
-    """
-    def word_combination(self):
+    def test_word_combination(self):
         # Do the neighbours change according to a word context?
         # Result: Not enough
-        d = 300
+        d = 50
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.format(d))
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim': d}})
         words_neg = ["man", "bad", "dirty"]
         words_pos = ["man", "good", "clean"]
 
         for x in range(2, 11):
-            w1 = combine_words(words_neg, e.get_E(), x=x)
-            w2 = combine_words(words_pos, e.get_E(), x=x)
+            w1 = e.combine_words(words_neg, x=x)
+            w2 = e.combine_words(words_pos, x=x)
             res1 = e.closest_n(w1, 5)
             res2 = e.closest_n(w2, 5)
-            print("x = {}. ".format(x), res1)
-            print("x = {}. ".format(x), res2)
-            print('----------------------------')
-    """
+            # print("x = {}. ".format(x), res1)
+            # print("x = {}. ".format(x), res2)
+            # print('----------------------------')
 
     def test_analogy_style(self):
         pass

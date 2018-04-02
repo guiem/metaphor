@@ -10,7 +10,7 @@ class W2VSubs(Metaphor):
     def __init__(self, emb_info={}):
         if not emb_info:
             dim = 50
-            emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.fromat(dim))
+            emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.format(dim))
             emb_info = {'glove.6B.{}d'.format(dim): {'path': emb_path, 'dim': dim}}
         self.e = Embeddings('Embeddings', emb=emb_info)
 
