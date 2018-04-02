@@ -18,7 +18,7 @@ import os
 
 
 def index(request):
-    context = {'checked':'word2vec_subst'}
+    context = {'checked': 'word2vec_subst_fast'}
     if request.POST:
         return metaphorize(request)
     return render(request, 'homepage.html', context)
@@ -51,7 +51,7 @@ def vote(request, debug=False):
     return HttpResponseRedirect("/metaphors")
 
 
-def create_metaphor(sentence_text, strategy="is_a-random"):
+def create_metaphor(sentence_text, strategy="word2vec_subst_fast"):
     if strategy == "random":
         m = RandomMetaphor()
         return m.metaphorize()
