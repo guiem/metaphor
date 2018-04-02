@@ -5,6 +5,9 @@ from django.utils import timezone
 from metaphor.utils import *
 from metaphor.decorators import *
 from metaphor.views import *
+from metaphor.random_metaphor import RandomMetaphor
+from metaphor.is_a_metaphor import IsAMetaphor
+from metaphor.w2v_subs import W2VSubs
 from metaphor.ai.embeddings import Embeddings
 from metaphor.settings import BASE_DIR, GOOGLE_RECAPTCHA_SECRET_KEY, GOOGLE_RECAPTCHA_RESPONSE_TEST
 from metaphor.models import Dictionary, Metaphor
@@ -31,29 +34,48 @@ class ModelsTest(TestCase):
         self.assertEqual(a, "cat")
 
 
+class RandomMetaphorTest(TestCase):
+
+    def test_random_metaphor(self):
+        file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
+        life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
+        m = RandomMetaphor()
+        res = m.metaphorize()
+        self.assertIn(res, life_metaphors)
+
+
+class IsAMetaphorTest(TestCase):
+
+    def setUp(self):
+        create_database()
+        self.factory = RequestFactory()
+
+    def test_is_a_metaphor(self):
+        sentence = "Guiem is nice."
+        m = IsAMetaphor()
+        is_a = m.metaphorize(sentence)
+        self.assertEqual(is_a, "Guiem is an unprecedented cat.")
+
+
+class W2VSubsTest(TestCase):
+
+    def test_w2v_subs(self):
+        sentence = "I am a beautiful human being"
+        emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
+        emb_info = {'glove.6B.50d': {'path': emb_path, 'dim': 50}}
+        m = W2VSubs(emb_info)
+        metaphor = m.metaphorize(sentence, num_neighbors=1)
+        self.assertEqual(metaphor, "I am a lovely animal being")
+        m.e.add_embeddings({'glove.6B.50d': {'sim_index': True}})
+        metaphor = m.metaphorize(sentence, num_neighbors=1, fast_desired=True)
+        self.assertEqual(metaphor, "I am a lovely animal being")
+
+
 class ViewsTest(TestCase):
     
     def setUp(self):
         create_database()
         self.factory = RequestFactory()
-    
-    def test_is_a_metaphor(self):
-        sentence = "Guiem is nice."
-        is_a = is_a_metaphor(sentence)
-        self.assertEqual(is_a, "Guiem is an unprecedented cat.")
-
-    def test_random_metaphor(self):
-        file_path = os.path.join(BASE_DIR, 'static/metaphors/metaphors.pkl')
-        life_metaphors = pickle.load(open(file_path, "rb"), encoding='utf-8')
-        res = random_metaphor()
-        self.assertIn(res, life_metaphors)
-
-    def test_word2vec_substitution(self):
-        sentence = "I am a beautiful human being"
-        emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
-        metaphor = word2vec_substitution(sentence, num_neighbors=1, emb_info={'glove.6B.50d': {'path': emb_path, 'dim':
-                                                                                                50}})
-        self.assertEqual(metaphor, "I am a lovely animal being")
 
     def test_vote(self):
         class Messages(): # messages stub to pass tests
@@ -95,12 +117,13 @@ class ViewsTest(TestCase):
         metaphor = get_object_or_404(Metaphor, pk=2)
         self.assertEquals('I would love to get a nice metaphor', metaphor.sentence_text)
 
+    """
     def test_combine_words(self):
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim': 50}})
         words = ['house', 'bright', 'sun']
         res = combine_words(words, e.get_E(), x=2)
-
+    """
 
 class UtilsTest(TestCase):
 
@@ -249,11 +272,10 @@ class AiTest(TestCase):
 
 class StrategiesTest(TestCase):
 
+    """
     def word_combination(self):
-        """
-        Do the neighbours change according to a word context?
-        Result: Not enough
-        """
+        # Do the neighbours change according to a word context?
+        # Result: Not enough
         d = 300
         file_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.format(d))
         e = Embeddings('Embeddings', {'glove.6B.50d': {'path': file_path, 'dim': d}})
@@ -268,6 +290,7 @@ class StrategiesTest(TestCase):
             print("x = {}. ".format(x), res1)
             print("x = {}. ".format(x), res2)
             print('----------------------------')
+    """
 
     def test_analogy_style(self):
         pass

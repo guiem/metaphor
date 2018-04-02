@@ -94,3 +94,12 @@ class Embeddings(metaclass=Singleton):
                     similarities = closest_n.values
                 closest[word] = list(zip(index_values, similarities))
         return closest
+
+    def combine_words(self, words, e_id=None, x=2):
+        e_id = e_id or self.default_e
+        word_vectors = self.embeddings[e_id].loc[self.embeddings[e_id].index.intersection(words)]
+        combined = []
+        for word in words:
+            combi = (word_vectors.sum(axis=0) + word_vectors.loc[word] * (x - 1)) / (len(words) + (x - 1))
+            combined.append((word, combi))
+        return combined
