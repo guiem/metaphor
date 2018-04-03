@@ -66,7 +66,7 @@ def create_metaphor(sentence_text, strategy="word2vec_subst_fast"):
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.{}d.txt'.format(dim))
         emb_info = {'glove.6B.{}d'.format(dim): {'path': emb_path, 'dim': dim, 'sim_index': True}}
         m = W2VSubs(emb_info=emb_info)
-        return m.metaphorize(sentence_text, fast_desired=True)
+        return m.metaphorize(sentence_text, **{'fast_desired':True})
     else:
         pass
     return ""

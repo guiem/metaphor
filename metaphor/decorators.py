@@ -1,8 +1,6 @@
 from functools import wraps
-
 from django.conf import settings
 from django.contrib import messages
-
 import requests
 
 
@@ -31,3 +29,4 @@ def check_recaptcha(view_func):
                                         'verify you are human! 🤖', extra_tags='alert alert-danger')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+

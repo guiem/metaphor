@@ -35,8 +35,8 @@ class MetaphorTest(TestCase):
 
     def test_no_exception(self):
         m = MetaphorClass()
-        m.create()
-        m.reconstruct()
+        m._create()
+        m._reconstruct(False)
         m.metaphorize()
 
 class RandomMetaphorTest(TestCase):
@@ -77,20 +77,19 @@ class W2VSubsTest(TestCase):
         emb_path = os.path.join(BASE_DIR, 'data/glove.6B/glove.6B.50d.txt')
         emb_info = {'glove.6B.50d': {'path': emb_path, 'dim': 50}}
         m = W2VSubs(emb_info)
-        metaphor = m.metaphorize(sentence, num_neighbors=1)
+        metaphor = m.metaphorize(sentence, **{'num_neighbors': 1})
         self.assertEqual(metaphor, "I am a lovely animal being")
         m.e.add_embeddings({'glove.6B.50d': {'sim_index': True}})
-        metaphor = m.metaphorize(sentence, num_neighbors=1, fast_desired=True)
+        metaphor = m.metaphorize(sentence, **{'num_neighbors': 1, 'fast_desired':True})
         self.assertEqual(metaphor, "I am a lovely animal being")
         m = W2VSubs()
-        m.metaphorize(sentence, num_neighbors=1, fast_desired=1)
+        m.metaphorize(sentence, **{'num_neighbors': 1, 'fast_desired':True})
         self.assertEqual(metaphor, "I am a lovely animal being")
 
     def test_w2v_I(self):
         sentence = "i ate too much"
         m = W2VSubs()
         metaphor = m.metaphorize(sentence)
-        print(metaphor)
 
 
 class ViewsTest(TestCase):

@@ -6,7 +6,7 @@ from metaphor.utils import get_random_connectors
 
 class IsAMetaphor(Metaphor):
 
-    def create(self, nouns_list):
+    def _create(self, nouns_list):
         triplets = []
         for noun in nouns_list:
             adjective = Dictionary.objects.random(word_type='a.').word.lower()
@@ -14,7 +14,7 @@ class IsAMetaphor(Metaphor):
             triplets.append((noun, adjective, new_noun))
         return triplets
 
-    def reconstruct(self, triplets):
+    def _reconstruct_core(self, triplets):
         metaphors = []
         for noun, adjective, new_noun in triplets:
             a_adjective = 'n' if adjective.startswith(('a', 'e', 'i', 'o', 'u')) else ''
@@ -23,11 +23,12 @@ class IsAMetaphor(Metaphor):
         connectors = get_random_connectors(len(metaphors))
         return ' '.join([j for i in zip(metaphors, connectors) for j in i][:-1]) + "."
 
-    def metaphorize(self, text=None):
-        nouns_tagged = self.deconstruct(text, PoS={'NOUN'})
+    def metaphorize(self, text=None, **kwargs):
+        correct = kwargs.pop('correct', False)
+        nouns_tagged = self._deconstruct(text, PoS={'NOUN'})
         if not nouns_tagged:
             m = RandomMetaphor()
             return m.metaphorize()
         nouns_list = [n for n, tag in nouns_tagged]
-        triplets = self.create(nouns_list)
-        return self.reconstruct(triplets)
+        triplets = self._create(nouns_list)
+        return self._reconstruct(correct, triplets)
