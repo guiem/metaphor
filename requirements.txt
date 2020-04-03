@@ -1,6 +1,6 @@
 attrs==17.4.0
 coverage==4.5
-Django==2.0.2
+Django==2.2.10
 nltk==3.2.5
 numpy==1.14.0
 pandas==0.22.0
