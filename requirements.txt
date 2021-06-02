@@ -24,4 +24,4 @@ sklearn==0.0
 sqlparse==0.3.1
 style==1.1.0
 update==0.0.1
-urllib3==1.25.8
+urllib3==1.26.5
